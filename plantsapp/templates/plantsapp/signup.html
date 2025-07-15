@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Sign Up</h2>
+<form method="post">
+  {% csrf_token %}
+  <input name="name" placeholder="Name"><br>
+  <input name="email" placeholder="Email"><br>
+  <input name="number" placeholder="Number"><br>
+  <input name="pincode" placeholder="Pincode"><br>
+  <input name="password" type="password" placeholder="Password"><br>
+  <input name="confirm_password" type="password" placeholder="Confirm Password"><br>
+  <button type="submit">Sign Up</button>
+</form>
+
+{% if errors %}
+  <ul style="color:red;">
+    {% for field, error_list in errors.items %}
+      <li><b>{{ field }}</b>: {{ error_list.0 }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+</body>
+</html>
