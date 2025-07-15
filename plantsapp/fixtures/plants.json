@@ -1,0 +1,18 @@
+[
+  {
+    "model": "plantsapp.plant",
+    "pk": 1,
+    "fields": {
+      "name": "Aloe Vera",
+      "type": "Succulent"
+    }
+  },
+  {
+    "model": "plantsapp.plant",
+    "pk": 2,
+    "fields": {
+      "name": "Bamboo",
+      "type": "Grass"
+    }
+  }
+]
