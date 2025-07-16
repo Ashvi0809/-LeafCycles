@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import CustomUser  # adjust this import if your model file name is different
+from .models import Product
+
 
 class CustomUserAdmin(BaseUserAdmin):
     model = CustomUser
@@ -23,3 +25,4 @@ class CustomUserAdmin(BaseUserAdmin):
     ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Product)

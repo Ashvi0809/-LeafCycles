@@ -9,6 +9,8 @@ from django.contrib.auth import authenticate
 import random
 from django.core.mail import send_mail
 from django.conf import settings
+from .models import Product
+
 
 otp_storage = {}
 
@@ -111,3 +113,7 @@ class ResetPasswordView(APIView):
             user.save()
             return Response({"msg": "Password reset successful"})
         return Response({"error": "User not found"}, status=404)
+
+def product_list(request):
+    products = Product.objects.all()
+    return render(request, 'plantsapp/product_list.html', {'products': products})
