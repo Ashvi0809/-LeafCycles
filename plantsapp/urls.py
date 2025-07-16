@@ -11,6 +11,7 @@ from .views import (
     ForgotPasswordView,
     VerifyOTPView,
     ResetPasswordView,
+    product_list
 )
 
 urlpatterns = [
@@ -21,5 +22,5 @@ urlpatterns = [
     path('forgot-password-form/', forgot_password_form, name='forgot-password-form'),
     path('verify-otp-form/', verify_otp_form, name='verify-otp-form'),
     path('reset-password-form/', reset_password_form, name='reset-password-form'),
-
+    path('products/', product_list, name='product_list'),
 ]
