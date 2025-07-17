@@ -10,6 +10,8 @@ import random
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import Product
+from django.shortcuts import get_object_or_404
+
 
 
 otp_storage = {}
@@ -117,3 +119,8 @@ class ResetPasswordView(APIView):
 def product_list(request):
     products = Product.objects.all()
     return render(request, 'plantsapp/product_list.html', {'products': products})
+
+
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'plantsapp/product_detail.html', {'product': product})
