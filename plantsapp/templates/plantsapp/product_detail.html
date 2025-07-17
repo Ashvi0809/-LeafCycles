@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ product.name }}</title>
+    <style>
+        .container {
+            width: 60%;
+            margin: auto;
+            margin-top: 50px;
+            border: 1px solid #ccc;
+            padding: 25px;
+            border-radius: 8px;
+            background-color: #f6fff8;
+        }
+        h1 {
+            text-align: center;
+            color: #2f4f2f;
+        }
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2a7a2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ product.name }}</h1>
+        <p><strong>Price:</strong> ₹{{ product.price }}</p>
+        <p><strong>Category:</strong> {{ product.category }}</p>
+        <p><strong>Subcategory:</strong> {{ product.subcategory }}</p>
+        <p><strong>Description:</strong> {{ product.description }}</p>
+        <a href="{% url 'product_list' %}">&larr; Back to Products</a>
+    </div>
+</body>
+</html>
