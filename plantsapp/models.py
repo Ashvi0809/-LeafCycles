@@ -42,3 +42,4 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
    # uploaded_at = models.DateTimeField(auto_now_add=True)
   #  uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
