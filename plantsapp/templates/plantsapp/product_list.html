@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,9 +25,34 @@
             color: #2c5f2d;
             font-weight: bold;
         }
+        button.wishlist-icon {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .top-buttons {
+            text-align: center;
+            margin: 20px;
+        }
+        .wishlist-button {
+            padding: 8px 16px;
+            background-color: #a3d9a5;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
+    <div class="top-buttons">
+        <a href="{% url 'wishlist' %}">
+            <button class="wishlist-button">Wishlist</button>
+        </a>
+    </div>
+
     <h1>Eco-Friendly Products</h1>
 
     {% if products %}
@@ -37,6 +61,7 @@
             <th>Name</th>
             <th>Price (₹)</th>
             <th>Category</th>
+            <th>Wishlist</th>
         </tr>
         {% for product in products %}
         <tr>
@@ -45,6 +70,22 @@
             </td>
             <td>{{ product.price }}</td>
             <td>{{ product.category }}</td>
+            <td>
+                {% if user.is_authenticated %}
+                    <button
+                        class="wishlist-icon"
+                        onclick="toggleWishlist({{ product.id }})"
+                        id="wishlist-icon-{{ product.id }}">
+                        {% if product.id in wishlist_ids %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                    </button>
+                {% else %}
+                    <span title="Login to add to wishlist">🤍</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
 
@@ -52,5 +93,37 @@
     {% else %}
         <p style="text-align:center;">No products available.</p>
     {% endif %}
+
+    <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function toggleWishlist(productId) {
+        fetch(`/api/wishlist/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                const icon = document.getElementById(`wishlist-icon-${productId}`);
+                icon.textContent = icon.textContent === '🤍' ? '❤️' : '🤍';
+            }
+        });
+    }
+    </script>
 </body>
 </html>
