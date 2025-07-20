@@ -11,8 +11,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import Product
 from django.shortcuts import get_object_or_404
+from .models import WishlistItem
+from .forms import ProductForm
 
-
+from .models import Product
+from django.contrib.auth.decorators import login_required
 
 otp_storage = {}
 
@@ -118,9 +121,36 @@ class ResetPasswordView(APIView):
 
 def product_list(request):
     products = Product.objects.all()
-    return render(request, 'plantsapp/product_list.html', {'products': products})
+    return render(request, 'plantsapp/product_list.html', {
+        'products': products
+    })
 
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'plantsapp/product_detail.html', {'product': product})
+
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')  # name in your urls.py
+    else:
+        form = ProductForm()
+    return render(request, 'plantsapp/add_product.html', {'form': form})
+
+@login_required
+def toggle_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    wishlist_item, created = WishlistItem.objects.get_or_create(user=request.user, product=product)
+
+    if not created:
+        wishlist_item.delete()
+    return redirect('product_list')  # or 'product_detail' if from detail page
+
+@login_required
+def wishlist_view(request):
+    wishlist_items = WishlistItem.objects.filter(user=request.user)
+    return render(request, 'plantsapp/wishlist.html', {'wishlist_items': wishlist_items})
+
