@@ -13,6 +13,9 @@ from .models import Product
 from django.shortcuts import get_object_or_404
 from .models import WishlistItem
 from .forms import ProductForm
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 
 from .models import Product
 from django.contrib.auth.decorators import login_required
@@ -121,9 +124,16 @@ class ResetPasswordView(APIView):
 
 def product_list(request):
     products = Product.objects.all()
+    wishlist_ids = []
+
+    if request.user.is_authenticated:
+        wishlist_ids = WishlistItem.objects.filter(user=request.user).values_list('product_id', flat=True)
+
     return render(request, 'plantsapp/product_list.html', {
-        'products': products
+        'products': products,
+        'wishlist_ids': list(wishlist_ids)  # Pass to template
     })
+
 
 
 def product_detail(request, pk):
@@ -140,15 +150,30 @@ def add_product(request):
         form = ProductForm()
     return render(request, 'plantsapp/add_product.html', {'form': form})
 
-@login_required
+
+@csrf_exempt
 def toggle_wishlist(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    wishlist_item, created = WishlistItem.objects.get_or_create(user=request.user, product=product)
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return JsonResponse({'error': 'Product not found'}, status=404)
 
-    if not created:
-        wishlist_item.delete()
-    return redirect('product_list')  # or 'product_detail' if from detail page
+        # You can use a fixed dummy user for now if no auth:
+        user = request.user if request.user.is_authenticated else None
 
+        if not user:
+            return JsonResponse({'error': 'User not authenticated'}, status=403)
+
+        wishlist_item, created = WishlistItem.objects.get_or_create(user=user, product=product)
+
+        if not created:
+            wishlist_item.delete()
+            return JsonResponse({'status': 'removed'})
+        else:
+            return JsonResponse({'status': 'added'})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 @login_required
 def wishlist_view(request):
     wishlist_items = WishlistItem.objects.filter(user=request.user)
