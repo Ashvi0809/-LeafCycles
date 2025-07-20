@@ -1,0 +1,21 @@
+
+{% block content %}
+<h2>Your Cart</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Price (₹)</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+    </tr>
+    {% for item in cart_items %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.product.price }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.product.price|floatformat:2|add:""|floatformat:2|floatformat:2|stringformat:"s"|add:item.quantity|stringformat:"s" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p><strong>Total Price: ₹{{ total_price }}</strong></p>
+{% endblock %}
