@@ -51,6 +51,10 @@
         <a href="{% url 'wishlist' %}">
             <button class="wishlist-button">Wishlist</button>
         </a>
+                                <a href="{% url 'cart' %}">
+    <button style="background-color: #90ee90; padding: 5px 15px;">View Cart</button>
+</a>
+
     </div>
 
     <h1>Eco-Friendly Products</h1>
@@ -86,6 +90,12 @@
                 {% else %}
                     <span title="Login to add to wishlist">🤍</span>
                 {% endif %}
+            </td>
+            <td>
+                <button onclick="addToCart({{ product.id }})" class="cart-btn">
+  Add to Cart
+</button>
+
             </td>
         </tr>
         {% endfor %}
@@ -131,6 +141,24 @@
     }
     return cookieValue;
   }
+
+    function addToCart(productId) {
+  fetch(`/api/cart/${productId}/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('Product added to cart!');
+  })
+  .catch(error => {
+    console.error('Error adding to cart:', error);
+  });
+}
 </script>
 
 
