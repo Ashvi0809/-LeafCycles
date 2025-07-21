@@ -1,0 +1,160 @@
+:root {
+            --eco-primary: #2d5016;
+            --eco-secondary: #4a7c59;
+            --eco-accent: #7fb069;
+            --eco-light: #d6eadf;
+            --eco-bg: #f8fffe;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .eco-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(122, 176, 105, 0.2);
+            box-shadow: 0 8px 32px rgba(45, 80, 22, 0.1);
+        }
+
+        .eco-header {
+            background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+            color: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--eco-accent);
+            box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
+        }
+
+        .btn-eco {
+            background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-eco:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.4);
+            color: white;
+        }
+
+        .input-group-text {
+            background-color: var(--eco-light);
+            border-color: var(--eco-accent);
+            color: var(--eco-primary);
+        }
+
+        .eco-icon {
+            color: var(--eco-secondary);
+        }
+
+        .error-list {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 0.375rem;
+        }
+
+        .leaf-decoration {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: var(--eco-accent);
+        }
+
+        .leaf-1 { top: 10%; left: 10%; }
+        .leaf-2 { top: 20%; right: 15%; }
+        .leaf-3 { bottom: 30%; left: 5%; }
+        .leaf-4 { bottom: 10%; right: 10%; }
+
+:root {
+            --eco-primary: #2d5016;
+            --eco-secondary: #4a7c59;
+            --eco-accent: #7fb069;
+            --eco-light: #d6eadf;
+            --eco-bg: #f8fffe;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .eco-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(122, 176, 105, 0.2);
+            box-shadow: 0 8px 32px rgba(45, 80, 22, 0.1);
+        }
+
+        .eco-header {
+            background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+            color: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--eco-accent);
+            box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
+        }
+
+        .btn-eco {
+            background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-eco:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.4);
+            color: white;
+        }
+
+        .input-group-text {
+            background-color: var(--eco-light);
+            border-color: var(--eco-accent);
+            color: var(--eco-primary);
+        }
+
+        .eco-icon {
+            color: var(--eco-secondary);
+        }
+
+        .error-list {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 0.375rem;
+        }
+
+        .leaf-decoration {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: var(--eco-accent);
+        }
+
+        .leaf-1 { top: 10%; left: 10%; }
+        .leaf-2 { top: 20%; right: 15%; }
+        .leaf-3 { bottom: 30%; left: 5%; }
+        .leaf-4 { bottom: 10%; right: 10%; }
+
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+.login-container .eco-card {
+    max-width: 450px; /* make the card max 400px wide */
+    width: 100%;      /* responsive */
+    margin: 0 auto;   /* center horizontally */
+    box-sizing: border-box;
+}
