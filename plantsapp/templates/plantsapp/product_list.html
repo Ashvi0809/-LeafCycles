@@ -51,6 +51,10 @@
         <a href="{% url 'wishlist' %}">
             <button class="wishlist-button">Wishlist</button>
         </a>
+                                <a href="{% url 'cart' %}">
+    <button style="background-color: #90ee90; padding: 5px 15px;">View Cart</button>
+</a>
+
     </div>
 
     <h1>Eco-Friendly Products</h1>
@@ -73,9 +77,10 @@
             <td>
                 {% if user.is_authenticated %}
                     <button
-                        class="wishlist-icon"
-                        onclick="toggleWishlist({{ product.id }})"
-                        id="wishlist-icon-{{ product.id }}">
+    class="wishlist-icon"
+    onclick="toggleWishlist({{ product.id }}, this)"
+    id="wishlist-icon-{{ product.id }}">
+
                         {% if product.id in wishlist_ids %}
                             ❤️
                         {% else %}
@@ -86,44 +91,76 @@
                     <span title="Login to add to wishlist">🤍</span>
                 {% endif %}
             </td>
+            <td>
+                <button onclick="addToCart({{ product.id }})" class="cart-btn">
+  Add to Cart
+</button>
+
+            </td>
         </tr>
         {% endfor %}
-
     </table>
     {% else %}
         <p style="text-align:center;">No products available.</p>
     {% endif %}
+    <form style="display:none;">{% csrf_token %}</form>
 
-    <script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+<script>
+  function toggleWishlist(productId, iconElement) {
+    fetch(`/api/wishlist/${productId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'added') {
+        iconElement.innerText = '❤️';
+      } else if (data.status === 'removed') {
+        iconElement.innerText = '🤍';
+      }
+    })
+    .catch(error => {
+      console.error('Error toggling wishlist:', error);
+    });
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
-        return cookieValue;
+      }
     }
+    return cookieValue;
+  }
 
-    function toggleWishlist(productId) {
-        fetch(`/api/wishlist/${productId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-            },
-        })
-        .then(response => {
-            if (response.ok) {
-                const icon = document.getElementById(`wishlist-icon-${productId}`);
-                icon.textContent = icon.textContent === '🤍' ? '❤️' : '🤍';
-            }
-        });
-    }
-    </script>
+    function addToCart(productId) {
+  fetch(`/api/cart/${productId}/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('Product added to cart!');
+  })
+  .catch(error => {
+    console.error('Error adding to cart:', error);
+  });
+}
+</script>
+
+
 </body>
 </html>

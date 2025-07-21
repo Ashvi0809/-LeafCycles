@@ -6,6 +6,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import CustomUser  # adjust this import if your model file name is different
 from .models import Product
 from .models import Category
+from .models import WishlistItem, CartItem
+
 
 
 class CustomUserAdmin(BaseUserAdmin):
@@ -28,3 +30,5 @@ class CustomUserAdmin(BaseUserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Product)
 admin.site.register(Category)
+admin.site.register(WishlistItem)
+admin.site.register(CartItem)
