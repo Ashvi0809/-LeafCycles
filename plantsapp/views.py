@@ -11,8 +11,16 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import Product
 from django.shortcuts import get_object_or_404
+from .models import WishlistItem
+from .forms import ProductForm
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import CartItem
 
 
+
+from .models import Product
+from django.contrib.auth.decorators import login_required
 
 otp_storage = {}
 
@@ -118,9 +126,78 @@ class ResetPasswordView(APIView):
 
 def product_list(request):
     products = Product.objects.all()
-    return render(request, 'plantsapp/product_list.html', {'products': products})
+    wishlist_ids = []
+
+    if request.user.is_authenticated:
+        wishlist_ids = WishlistItem.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    return render(request, 'plantsapp/product_list.html', {
+        'products': products,
+        'wishlist_ids': list(wishlist_ids)  # Pass to template
+    })
+
 
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'plantsapp/product_detail.html', {'product': product})
+
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')  # name in your urls.py
+    else:
+        form = ProductForm()
+    return render(request, 'plantsapp/add_product.html', {'form': form})
+
+
+@csrf_exempt
+def toggle_wishlist(request, product_id):
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return JsonResponse({'error': 'Product not found'}, status=404)
+
+        # You can use a fixed dummy user for now if no auth:
+        user = request.user if request.user.is_authenticated else None
+
+        if not user:
+            return JsonResponse({'error': 'User not authenticated'}, status=403)
+
+        wishlist_item, created = WishlistItem.objects.get_or_create(user=user, product=product)
+
+        if not created:
+            wishlist_item.delete()
+            return JsonResponse({'status': 'removed'})
+        else:
+            return JsonResponse({'status': 'added'})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+@login_required
+def wishlist_view(request):
+    wishlist_items = WishlistItem.objects.filter(user=request.user)
+    return render(request, 'plantsapp/wishlist.html', {'wishlist_items': wishlist_items})
+
+@csrf_exempt
+def add_to_cart(request, product_id):
+    if request.method == 'POST' and request.user.is_authenticated:
+        product = Product.objects.get(id=product_id)
+        cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+        return JsonResponse({'status': 'added'})
+    return JsonResponse({'status': 'unauthorized'}, status=403)
+
+
+@login_required
+def cart_view(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render(request, 'plantsapp/cart.html', {
+        'cart_items': cart_items,
+        'total_price': total_price
+    })

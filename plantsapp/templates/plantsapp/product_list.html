@@ -443,7 +443,7 @@
 
                 // Update product count (simplified)
                 const visibleProducts = document.querySelectorAll('.product-card[style="display: block"], .product-card:not([style*="display: none"])').length;
-                document.querySelector('.product-count strong').textContent = `${visibleProducts} products`;
+                document.querySelector('.product-count strong').textContent = ${visibleProducts} products;
             });
         });
 
@@ -496,7 +496,7 @@
         // Notification system
         function showNotification(message, type) {
             const notification = document.createElement('div');
-            notification.className = `alert alert-${type === 'success' ? 'success' : 'info'} position-fixed`;
+            notification.className = alert alert-${type === 'success' ? 'success' : 'info'} position-fixed;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
             notification.innerHTML = `
                 <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>

@@ -14,6 +14,7 @@ from .views import (
     product_list,
     product_detail
 )
+from . import views
 
 urlpatterns = [
     # HTML Form Views
@@ -25,5 +26,11 @@ urlpatterns = [
     path('reset-password-form/', reset_password_form, name='reset-password-form'),
     path('products/', product_list, name='product_list'),
     path('products/<int:pk>/', product_detail, name='product_detail'),
+    path('add-product/', views.add_product, name='add-product'),
+    path('wishlist/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
+    path('wishlist/', views.wishlist_view, name='wishlist'),
+    path('cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/', views.cart_view, name='cart'),
+
 
 ]
