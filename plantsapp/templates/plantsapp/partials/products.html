@@ -1,0 +1,26 @@
+{% load static %}
+
+<section id="products" class="products py-5 bg-light">
+  <div class="container">
+    <div class="section-title text-center mb-5">
+      <span class="section-badge">Eco Collection</span>
+      <h2>Featured Sustainable Products</h2>
+      <p>Explore our curated range of environmentally conscious, high-quality items</p>
+    </div>
+    <div class="row g-4">
+      {% for product in products %}
+      <div class="col-lg-4 col-md-6">
+        <div class="product-card border shadow-sm rounded">
+          <img src="{{ product.image_url|default:'/static/default-product.jpg' }}" class="img-fluid rounded-top" alt="{{ product.name }}">
+          <div class="p-3">
+            <h5 class="mb-1">{{ product.name }}</h5>
+            <small class="text-muted">{{ product.category }}</small>
+            <p class="mt-2">₹{{ product.price }}</p>
+            <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-success btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>

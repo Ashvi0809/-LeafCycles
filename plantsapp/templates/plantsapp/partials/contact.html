@@ -1,0 +1,39 @@
+{% load static %}
+
+<section id="contact" class="contact py-5">
+  <div class="container">
+    <div class="section-title text-center mb-5">
+      <span class="section-badge">Get In Touch</span>
+      <h2>Join the Green Movement</h2>
+      <p>We’d love to hear from you! Reach out to explore sustainable living options or to partner with us.</p>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+          </div>
+          <div class="mb-3">
+            <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+          </div>
+          <div class="mb-3">
+            <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+          </div>
+          <div class="mb-3">
+            <textarea name="message" class="form-control" rows="4" placeholder="Your Message" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Send Message</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <ul class="list-unstyled">
+          <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+          <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+          <li><i class="fas fa-envelope me-2"></i> support@leafcycles.com</li>
+          <li><i class="fas fa-clock me-2"></i> Mon–Sat: 9AM–7PM | Sun: 10AM–5PM</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
