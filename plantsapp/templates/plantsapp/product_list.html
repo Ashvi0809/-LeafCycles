@@ -167,10 +167,10 @@
             <div class="product-card" data-category="{{ product.category }}">
               <div class="product-image">
                {% if product.image %}
-  <img src="{{ product.image.url }}" alt="{{ product.name }}">
-{% else %}
-  <img src="{% static 'images/bike-placeholder.png' %}" alt="No image available">
-{% endif %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="{% static 'images/bike-placeholder.png' %}" alt="No image available">
+          {% endif %}
 
                 <button class="wishlist-btn" onclick="event.preventDefault(); toggleWishlist(this, {{ product.id }})">
                   <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart"></i>
@@ -181,11 +181,19 @@
                 <h6 class="product-title">{{ product.name }}</h6>
                 <div class="product-price">${{ product.price }}</div>
                 <div class="product-rating">
-                  <div class="stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i><i class="far fa-star"></i>
-                  </div>
-                  <span class="rating-text">{{ product.reviews.count }} reviews</span>
+                 <form method="POST" action="{% url 'rate_product' product.id %}" class="rating-form">
+   {% csrf_token %}
+  <div class="stars">
+    {% for i in "12345" %}
+      <i class="{% if product.avg_rating|default:0 >= forloop.counter %}fas{% else %}far{% endif %} fa-star star"
+         data-value="{{ forloop.counter }}"
+         data-product="{{ product.id }}"></i>
+    {% endfor %}
+  </div>
+  <input type="hidden" name="rating" class="rating-input" value="0" />
+</form>
+<span class="rating-text">{{ product.reviews.count }} reviews</span>
+
                 </div>
                 <button class="add-to-cart" onclick="event.preventDefault(); addToCart({{ product.id }})">
                   <i class="fas fa-shopping-cart me-2"></i>Add to Cart
@@ -270,6 +278,16 @@
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
   }
+    document.querySelectorAll('.stars .star').forEach(star => {
+    star.addEventListener('click', function () {
+      const rating = this.getAttribute('data-value');
+      const productId = this.getAttribute('data-product');
+      const form = this.closest('.rating-form');
+      const input = form.querySelector('.rating-input');
+      input.value = rating;
+      form.submit();  // Submit form with selected rating
+    });
+  });
 </script>
 </body>
 </html>

@@ -16,7 +16,8 @@ from .forms import ProductForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .models import CartItem
-
+from django.db.models import Count
+from django.views.decorators.http import require_POST
 
 
 from .models import Product
@@ -125,7 +126,7 @@ class ResetPasswordView(APIView):
         return Response({"error": "User not found"}, status=404)
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.annotate(review_count=Count('reviews'))
     wishlist_ids = []
 
     if request.user.is_authenticated:
@@ -133,7 +134,7 @@ def product_list(request):
 
     return render(request, 'plantsapp/product_list.html', {
         'products': products,
-        'wishlist_ids': list(wishlist_ids)  # Pass to template
+        'wishlist_ids': list(wishlist_ids)
     })
 
 
@@ -211,3 +212,16 @@ def cart_view(request):
     })
 def landing_page(request):
     return render(request, 'plantsapp/landing.html')
+
+@require_POST
+@login_required
+def rate_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    rating = int(request.POST.get("rating"))
+    user = request.user
+
+    review, created = Review.objects.get_or_create(user=user, product=product)
+    review.rating = rating
+    review.save()
+
+    return redirect("product_list")  # or use `request.META.get('HTTP_REFERER')`
