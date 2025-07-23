@@ -7,6 +7,7 @@ from .models import CustomUser  # adjust this import if your model file name is 
 from .models import Product
 from .models import Category
 from .models import WishlistItem, CartItem
+from .models import Review
 
 
 
@@ -26,9 +27,15 @@ class CustomUserAdmin(BaseUserAdmin):
     )
     search_fields = ('email',)
     ordering = ('email',)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'price', 'uploaded_at', 'uploaded_by')
+
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'comment', 'created_at')
 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Product)
+admin.site.register(Product, ProductAdmin)
 admin.site.register(Category)
 admin.site.register(WishlistItem)
 admin.site.register(CartItem)
+admin.site.register(Review, ReviewAdmin)

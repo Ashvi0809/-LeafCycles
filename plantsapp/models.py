@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.db.models import Avg
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, number, pincode, password=None):
@@ -46,8 +48,22 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
-   # uploaded_at = models.DateTimeField(auto_now_add=True)
-  #  uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    uploaded_at = models.DateTimeField(default=timezone.now)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='uploaded_products'
+    )
+
+    @property
+    def avg_rating(self):
+        return self.reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+
+    def __str__(self):
+        return self.name
 
 
 
@@ -69,4 +85,19 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} ({self.quantity})"
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('product', 'user')  # one review per user per product
+
+    def __str__(self):
+        return f"{self.user.email} - {self.product.name} ({self.rating}★)"
+
+
 

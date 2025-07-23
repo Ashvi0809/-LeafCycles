@@ -18,7 +18,8 @@ from .views import (
     wishlist_view,
     add_to_cart,
     cart_view,
-    landing_page
+    landing_page,
+    rate_product
 )
 
 urlpatterns = [
@@ -40,6 +41,7 @@ urlpatterns = [
     path('wishlist/', wishlist_view, name='wishlist'),
     path('cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('cart/', cart_view, name='cart'),
+    path('rate/<int:product_id>/', rate_product, name='rate_product'),
 
     #  Landing Page
     path('', landing_page, name='landing'),
