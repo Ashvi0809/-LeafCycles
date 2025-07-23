@@ -113,10 +113,10 @@ body {
             color: var(--eco-accent);
         }
 
-        .leaf-1 { top: 10%; left: 10%; }
-        .leaf-2 { top: 20%; right: 15%; }
-        .leaf-3 { bottom: 30%; left: 5%; }
-        .leaf-4 { bottom: 10%; right: 10%; }
+.leaf-1 { top: 10%; left: 10%; }
+.leaf-2 { top: 20%; right: 15%; }
+.leaf-3 { bottom: 30%; left: 5%; }
+.leaf-4 { bottom: 10%; right: 10%; }
 
 :root {
             --eco-primary: #2d5016;
@@ -1177,26 +1177,6 @@ body {
         .eco-icon {
             color: var(--eco-secondary);
         }
-/* Rating Section */
-.rating-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 15px;
-}
-
-.stars {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.stars i {
-  color: #ffc107;
-  font-size: 1.2rem;
-}
 
         .error-list {
             background-color: #f8d7da;

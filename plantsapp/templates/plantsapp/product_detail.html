@@ -321,13 +321,16 @@
 }
 
 
-        .current-price {
-    font-size: 2rem;         /* Reduced from 3.5rem */
-    font-weight: 600;        /* Reduced from 800 */
+       .current-price {
+    font-size: 2rem;
+    font-weight: 600;
     margin-bottom: 0.5rem;
     position: relative;
     z-index: 2;
+    color: #ffffff !important; /* ✅ Forces white text */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* ✅ Adds subtle contrast for visibility */
 }
+
 
 
         .price-details {
@@ -959,6 +962,7 @@
 
             .price-section {
                 padding: 2rem;
+
             }
 
             .tab-content-wrapper {
