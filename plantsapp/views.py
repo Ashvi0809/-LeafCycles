@@ -225,3 +225,4 @@ def rate_product(request, product_id):
     review.save()
 
     return redirect("product_list")  # or use `request.META.get('HTTP_REFERER')`
+

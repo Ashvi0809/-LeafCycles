@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
   <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
   <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
 
@@ -678,101 +678,39 @@
                         Clear Cart
                     </button>
                 </div>
+        ``             {% for item in cart_items %}
+        <div class="cart-item">
+          <div class="item-image-container">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-image">
+            {% else %}
+              <img src="{% static 'plantsapp/images/placeholder.svg' %}" alt="No image" class="item-image">
+            {% endif %}
+            <span class="item-badge">Eco</span>
+          </div>
 
-                <!-- Cart Item 1 -->
-                <div class="cart-item">
-                    <div class="item-image-container">
-                        <img src="/placeholder.svg?height=100&width=100" alt="Bamboo Water Bottle" class="item-image">
-                        <span class="item-badge">Eco</span>
-                    </div>
-                    <div class="item-details">
-                        <div class="item-brand">EcoLife</div>
-                        <h3 class="item-name">Sustainable Bamboo Water Bottle</h3>
-                        <div class="item-features">
-                            <span class="feature-tag">BPA-Free</span>
-                            <span class="feature-tag">Biodegradable</span>
-                        </div>
-                        <div class="item-price">
-                            <span class="original-price">$29.99</span>
-                            $24.99
-                        </div>
-                    </div>
-                    <div class="quantity-controls">
-                        <div>
-                            <div class="quantity-label">Quantity</div>
-                            <div class="quantity-wrapper">
-                                <button class="qty-btn" onclick="decreaseQuantity(1)">-</button>
-                                <input type="number" class="qty-input" value="2" min="1" id="qty-1">
-                                <button class="qty-btn" onclick="increaseQuantity(1)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="remove-item-btn" onclick="removeItem(1)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+          <div class="item-details">
+            <div class="item-brand">{{ item.product.brand|default:"LeafCycles" }}</div>
+            <h3 class="item-name">{{ item.product.name }}</h3>
+            <div class="item-price">${{ item.product.price }}</div>
+          </div>
 
-                <!-- Cart Item 2 -->
-                <div class="cart-item">
-                    <div class="item-image-container">
-                        <img src="/placeholder.svg?height=100&width=100" alt="Cotton Tote Bag" class="item-image">
-                        <span class="item-badge">Organic</span>
-                    </div>
-                    <div class="item-details">
-                        <div class="item-brand">GreenBag Co.</div>
-                        <h3 class="item-name">Organic Cotton Reusable Tote Bag</h3>
-                        <div class="item-features">
-                            <span class="feature-tag">Fair Trade</span>
-                            <span class="feature-tag">Washable</span>
-                        </div>
-                        <div class="item-price">$18.50</div>
-                    </div>
-                    <div class="quantity-controls">
-                        <div>
-                            <div class="quantity-label">Quantity</div>
-                            <div class="quantity-wrapper">
-                                <button class="qty-btn" onclick="decreaseQuantity(2)">-</button>
-                                <input type="number" class="qty-input" value="1" min="1" id="qty-2">
-                                <button class="qty-btn" onclick="increaseQuantity(2)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="remove-item-btn" onclick="removeItem(2)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-
-                <!-- Cart Item 3 -->
-                <div class="cart-item">
-                    <div class="item-image-container">
-                        <img src="/placeholder.svg?height=100&width=100" alt="Solar Phone Charger" class="item-image">
-                        <span class="item-badge">Solar</span>
-                    </div>
-                    <div class="item-details">
-                        <div class="item-brand">SolarTech</div>
-                        <h3 class="item-name">Portable Solar Phone Charger</h3>
-                        <div class="item-features">
-                            <span class="feature-tag">Waterproof</span>
-                            <span class="feature-tag">Fast Charge</span>
-                        </div>
-                        <div class="item-price">$45.99</div>
-                    </div>
-                    <div class="quantity-controls">
-                        <div>
-                            <div class="quantity-label">Quantity</div>
-                            <div class="quantity-wrapper">
-                                <button class="qty-btn" onclick="decreaseQuantity(3)">-</button>
-                                <input type="number" class="qty-input" value="1" min="1" id="qty-3">
-                                <button class="qty-btn" onclick="increaseQuantity(3)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="remove-item-btn" onclick="removeItem(3)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+          <div class="quantity-controls">
+            <div class="quantity-label">Quantity</div>
+            <div class="quantity-wrapper">
+              <button class="qty-btn" onclick="decreaseQuantity({{ item.id }})">-</button>
+              <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" id="qty-{{ item.id }}">
+              <button class="qty-btn" onclick="increaseQuantity({{ item.id }})">+</button>
             </div>
+          </div>
 
+          <button class="remove-item-btn" onclick="removeItem({{ item.id }})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        {% endfor %}
+
+``
             <!-- Order Summary -->
             <div class="order-summary fade-in">
                 <h3 class="summary-title">Order Summary</h3>
