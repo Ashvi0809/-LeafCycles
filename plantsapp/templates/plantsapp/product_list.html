@@ -1,166 +1,270 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Product List</title>
-    <style>
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #a3d9a5;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 30px;
-        }
-        a {
-            text-decoration: none;
-            color: #2c5f2d;
-            font-weight: bold;
-        }
-        button.wishlist-icon {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .top-buttons {
-            text-align: center;
-            margin: 20px;
-        }
-        .wishlist-button {
-            padding: 8px 16px;
-            background-color: #a3d9a5;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bicycle Products & Accessories - Leaf Cycles</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="{% static 'plantsapp/css/style.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
+  <style>
+    .product-card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .category-item {
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+    }
+    .category-item.active {
+      background-color: #e6f4ea;
+      font-weight: 600;
+    }
+    .sidebar {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="top-buttons">
-        <a href="{% url 'wishlist' %}">
-            <button class="wishlist-button">Wishlist</button>
-        </a>
-                                <a href="{% url 'cart' %}">
-    <button style="background-color: #90ee90; padding: 5px 15px;">View Cart</button>
-</a>
+<!-- Page Header with Overlay -->
+{% include 'plantsapp/partials/navbar.html'%}
+<section class="page-header text-white text-center position-relative" style="background: url('{% static 'plantsapp/images/hero-bg.jpg' %}') no-repeat center center; background-size: cover; min-height: 30vh; display: flex; align-items: center;">
+  <!-- Dark overlay -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.5); z-index: 1;"></div>
 
+  <!-- Content -->
+  <div class="container position-relative" style="z-index: 2;">
+    <h1 class="display-5 fw-bold">Bicycle Products & Accessories</h1>
+    <p class="lead">Everything you need for your cycling journey</p>
+  </div>
+</section>
+
+
+<div class="container-fluid mt-4 px-0">
+  <div class="row">
+
+<!-- Sidebar -->
+<div class="col-lg-2 mb-4">
+  <div class="sidebar">
+    <h5><i class="fas fa-filter me-2"></i>Collection</h5>
+    <ul class="category-list list-unstyled">
+      <li class="category-item" data-category="all">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <div><i class="fas fa-list me-2"></i> All</div>
+          <span class="category-count text-end">{{ products|length }}</span>
+        </div>
+      </li>
+
+
+  <li class="category-item" data-category="bikes">
+    <div><i class="fas fa-shopping-basket me-2"></i> Grocery & Food</div>
+  </li>
+
+  <li class="category-item" data-category="accessories">
+    <div><i class="fas fa-pen me-2"></i> Office & Stationary</div>
+  </li>
+
+  <li class="category-item" data-category="parts">
+    <div><i class="fas fa-microchip me-2"></i> Tech & Gadgets</div>
+  </li>
+
+  <li class="category-item" data-category="safety">
+    <div><i class="fas fa-seedling me-2"></i> Garden & Outdoors</div>
+  </li>
+
+  <li class="category-item" data-category="maintenance">
+    <div><i class="fas fa-child me-2"></i> Kids</div>
+  </li>
+
+  <li class="category-item" data-category="clothing">
+    <div><i class="fas fa-suitcase-rolling me-2"></i> On-the-Go Essentials</div>
+  </li>
+
+  <li class="category-item" data-category="electronics">
+    <div><i class="fas fa-blender me-2"></i> Kitchen & Dining</div>
+  </li>
+
+  <li class="category-item" data-category="fashion">
+    <div><i class="fas fa-tshirt me-2"></i> Fashion & Accessories</div>
+  </li>
+
+  <li class="category-item" data-category="personal-care">
+    <div><i class="fas fa-spa me-2"></i> Personal Care & Wellness</div>
+  </li>
+
+  <li class="category-item" data-category="home-living">
+    <div><i class="fas fa-couch me-2"></i> Home & Living</div>
+  </li>
+</ul>
+
+       <div class="promo-banner mt-4" style="padding: 6px 12px;">
+  <div class="promo-text" style="font-size: 1rem;"><i class="fas fa-tag me-2"></i>Get 15% OFF</div>
+</div>
+
+
+        <div class="text-center mt-3">
+          <div class="organic-badge">
+            <i class="fas fa-leaf"></i> 100% Eco-Friendly
+          </div>
+        </div>
+      </div>
     </div>
 
-    <h1>Eco-Friendly Products</h1>
+    <!-- Product Grid -->
+    <div class="col-lg-10 me-0 pe-0">
+      <div class="main-content">
+        <div class="content-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <span class="me-3">View As:</span>
+            <div class="view-options">
+              <button class="view-btn" data-view="2"><i class="fas fa-th-large"></i></button>
+              <button class="view-btn active" data-view="3"><i class="fas fa-th"></i></button>
+              <button class="view-btn" data-view="4"><i class="fas fa-grip-horizontal"></i></button>
+            </div>
+          </div>
+          <div class="product-count">
+            <strong>{{ products|length }} products</strong>
+          </div>
+          <div class="controls d-flex gap-3">
+            <div class="d-flex align-items-center gap-2">
+              <span>Display:</span>
+              <select class="form-select form-select-sm" style="width: auto;">
+                <option>12 per page</option>
+                <option>24 per page</option>
+                <option>36 per page</option>
+              </select>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span>Sort by:</span>
+              <select class="form-select form-select-sm" style="width: auto;">
+                <option>Best selling</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Newest First</option>
+                <option>Customer Rating</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-    {% if products %}
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Price (₹)</th>
-            <th>Category</th>
-            <th>Wishlist</th>
-        </tr>
-        {% for product in products %}
-        <tr>
-            <td>
-                <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
-            </td>
-            <td>{{ product.price }}</td>
-            <td>{{ product.category }}</td>
-            <td>
-                {% if user.is_authenticated %}
-                    <button
-    class="wishlist-icon"
-    onclick="toggleWishlist({{ product.id }}, this)"
-    id="wishlist-icon-{{ product.id }}">
+        <div class="product-grid" id="productGrid">
+          {% for product in products %}
+          <a href="{% url 'product_detail' pk=product.id %}" class="product-card-link">
+            <div class="product-card" data-category="{{ product.category }}">
+              <div class="product-image">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                <button class="wishlist-btn" onclick="event.preventDefault(); toggleWishlist(this, {{ product.id }})">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+                </button>
+              </div>
+              <div class="product-info">
+                <div class="product-brand">{{ product.brand }}</div>
+                <h6 class="product-title">{{ product.name }}</h6>
+                <div class="product-price">${{ product.price }}</div>
+                <div class="product-rating">
+                  <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="far fa-star"></i>
+                  </div>
+                  <span class="rating-text">{{ product.reviews.count }} reviews</span>
+                </div>
+                <button class="add-to-cart" onclick="event.preventDefault(); addToCart({{ product.id }})">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                </button>
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
 
-                        {% if product.id in wishlist_ids %}
-                            ❤️
-                        {% else %}
-                            🤍
-                        {% endif %}
-                    </button>
-                {% else %}
-                    <span title="Login to add to wishlist">🤍</span>
-                {% endif %}
-            </td>
-            <td>
-                <button onclick="addToCart({{ product.id }})" class="cart-btn">
-  Add to Cart
-</button>
+        <!-- Pagination Placeholder -->
+        <div class="pagination-wrapper mt-4">
+          <nav>
+            <ul class="pagination">
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'plantsapp/partials/footer.html'%}
 
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <p style="text-align:center;">No products available.</p>
-    {% endif %}
-    <form style="display:none;">{% csrf_token %}</form>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Filtering & Wishlist JS -->
 <script>
-  function toggleWishlist(productId, iconElement) {
-    fetch(`/api/wishlist/${productId}/`, {
+  document.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', function () {
+      document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+
+      const category = this.getAttribute('data-category');
+      document.querySelectorAll('.product-card').forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.parentElement.style.display = 'block';
+        } else {
+          card.parentElement.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  function toggleWishlist(btn, productId) {
+    event.stopPropagation();
+    const icon = btn.querySelector('i');
+    const active = icon.classList.contains('fas');
+    icon.classList.toggle('fas', !active);
+    icon.classList.toggle('far', active);
+    fetch(`/wishlist/${productId}/`, {
       method: 'POST',
-      headers: {
-        'X-CSRFToken': getCookie('csrftoken'),
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'added') {
-        iconElement.innerText = '❤️';
-      } else if (data.status === 'removed') {
-        iconElement.innerText = '🤍';
-      }
-    })
-    .catch(error => {
-      console.error('Error toggling wishlist:', error);
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
     });
   }
 
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
+  function addToCart(productId) {
+    event.stopPropagation();
+    fetch(`/cart/${productId}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    }).then(res => {
+      if (res.ok) showNotification('Added to cart!', 'success');
+    });
   }
 
-    function addToCart(productId) {
-  fetch(`/api/cart/${productId}/`, {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({})
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert('Product added to cart!');
-  })
-  .catch(error => {
-    console.error('Error adding to cart:', error);
-  });
-}
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type}`;
+    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+    notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>${message}`;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
 </script>
-
-
 </body>
 </html>

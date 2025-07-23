@@ -137,10 +137,18 @@ def product_list(request):
     })
 
 
-
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    return render(request, 'plantsapp/product_detail.html', {'product': product})
+    in_wishlist = False
+
+    if request.user.is_authenticated:
+        in_wishlist = WishlistItem.objects.filter(user=request.user, product=product).exists()
+
+    return render(request, 'plantsapp/product_detail.html', {
+        'product': product,
+        'in_wishlist': in_wishlist
+    })
+
 
 def add_product(request):
     if request.method == 'POST':
@@ -201,6 +209,5 @@ def cart_view(request):
         'cart_items': cart_items,
         'total_price': total_price
     })
-
 def landing_page(request):
     return render(request, 'plantsapp/landing.html')

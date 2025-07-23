@@ -12,12 +12,14 @@ from .views import (
     VerifyOTPView,
     ResetPasswordView,
     product_list,
-    product_detail
+    product_detail,
+    add_product,
+    toggle_wishlist,
+    wishlist_view,
+    add_to_cart,
+    cart_view,
+    landing_page
 )
-from . import views
-from django.contrib import admin
-from django.urls import path, include
-
 
 urlpatterns = [
     # HTML Form Views
@@ -27,16 +29,18 @@ urlpatterns = [
     path('forgot-password-form/', forgot_password_form, name='forgot-password-form'),
     path('verify-otp-form/', verify_otp_form, name='verify-otp-form'),
     path('reset-password-form/', reset_password_form, name='reset-password-form'),
+
+    # Product Views
     path('products/', product_list, name='product_list'),
     path('products/<int:pk>/', product_detail, name='product_detail'),
-    path('add-product/', views.add_product, name='add-product'),
-    path('wishlist/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
-    path('wishlist/', views.wishlist_view, name='wishlist'),
-    path('cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
-    path('cart/', views.cart_view, name='cart'),
-path('', views.landing_page, name='landing'),
-    path('', views.landing_page, name='landing'),
+    path('add-product/', add_product, name='add-product'),
 
+    # Wishlist & Cart
+    path('wishlist/<int:product_id>/', toggle_wishlist, name='toggle_wishlist'),
+    path('wishlist/', wishlist_view, name='wishlist'),
+    path('cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
+    path('cart/', cart_view, name='cart'),
 
-
+    #  Landing Page
+    path('', landing_page, name='landing'),
 ]

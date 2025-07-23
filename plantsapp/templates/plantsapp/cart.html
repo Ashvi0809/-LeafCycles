@@ -1,21 +1,983 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Leaf Cycles</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
 
-{% block content %}
-<h2>Your Cart</h2>
-<table border="1">
-    <tr>
-        <th>Name</th>
-        <th>Price (₹)</th>
-        <th>Quantity</th>
-        <th>Subtotal</th>
-    </tr>
-    {% for item in cart_items %}
-    <tr>
-        <td>{{ item.product.name }}</td>
-        <td>{{ item.product.price }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.product.price|floatformat:2|add:""|floatformat:2|floatformat:2|stringformat:"s"|add:item.quantity|stringformat:"s" }}</td>
-    </tr>
-    {% endfor %}
-</table>
-<p><strong>Total Price: ₹{{ total_price }}</strong></p>
-{% endblock %}
+    <style>
+        :root {
+            --eco-primary: #2d5016;
+            --eco-secondary: #4a7c59;
+            --eco-accent: #7fb069;
+            --eco-light: #d6eadf;
+            --eco-bg: #f8fffe;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            padding-top: 76px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+            color: white;
+            padding: 3rem 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 15px,
+                rgba(255,255,255,0.03) 15px,
+                rgba(255,255,255,0.03) 30px
+            );
+            animation: shimmer 6s linear infinite;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(127, 176, 105, 0.2);
+        }
+
+        .breadcrumb {
+            margin: 0;
+            background: none;
+            padding: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--eco-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--eco-primary);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--eco-primary);
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .cart-container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .cart-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        /* Cart Items Section */
+        .cart-items-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(45, 80, 22, 0.1);
+            border: 1px solid rgba(127, 176, 105, 0.1);
+            height: fit-content;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--eco-light);
+        }
+
+        .cart-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+            margin: 0;
+        }
+
+        .cart-count {
+            color: var(--eco-secondary);
+            font-weight: 500;
+        }
+
+        .clear-cart-btn {
+            background: none;
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .clear-cart-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Cart Item */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(127, 176, 105, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            background: rgba(127, 176, 105, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 0 -1rem;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image-container {
+            position: relative;
+            margin-right: 1.5rem;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid var(--eco-light);
+        }
+
+        .item-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .item-details {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .item-brand {
+            color: var(--eco-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .item-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--eco-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .item-features {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-tag {
+            background: var(--eco-light);
+            color: var(--eco-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Quantity Controls */
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+
+        .quantity-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--eco-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .quantity-wrapper {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--eco-light);
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .qty-btn {
+            background: var(--eco-light);
+            border: none;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--eco-primary);
+            font-weight: 600;
+        }
+
+        .qty-btn:hover {
+            background: var(--eco-accent);
+            color: white;
+        }
+
+        .qty-input {
+            border: none;
+            width: 50px;
+            height: 35px;
+            text-align: center;
+            font-weight: 600;
+            background: white;
+            color: var(--eco-primary);
+        }
+
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .remove-item-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(45, 80, 22, 0.1);
+            border: 1px solid rgba(127, 176, 105, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .summary-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(127, 176, 105, 0.1);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--eco-primary);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 2px solid var(--eco-accent);
+        }
+
+        .summary-label {
+            color: var(--eco-secondary);
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--eco-primary);
+        }
+
+        .discount-value {
+            color: #28a745;
+        }
+
+        /* Coupon Section */
+        .coupon-section {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--eco-light) 0%, #ffffff 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(127, 176, 105, 0.2);
+        }
+
+        .coupon-title {
+            font-weight: 600;
+            color: var(--eco-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .coupon-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .coupon-input {
+            flex: 1;
+            border: 2px solid var(--eco-light);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-weight: 500;
+        }
+
+        .coupon-input:focus {
+            border-color: var(--eco-accent);
+            box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
+        }
+
+        .apply-coupon-btn {
+            background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .apply-coupon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 124, 89, 0.4);
+        }
+
+        /* Checkout Buttons */
+        .checkout-section {
+            margin-top: 2rem;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background: linear-gradient(135deg, var(--eco-primary), var(--eco-secondary));
+            border: none;
+            color: white;
+            padding: 1rem;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(45, 80, 22, 0.3);
+            color: white;
+        }
+
+        .btn-continue-shopping {
+            width: 100%;
+            background: white;
+            border: 2px solid var(--eco-accent);
+            color: var(--eco-primary);
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-continue-shopping:hover {
+            background: var(--eco-accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Security Badge */
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(127, 176, 105, 0.1);
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--eco-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .security-badge i {
+            color: #28a745;
+        }
+
+        /* Empty Cart */
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(45, 80, 22, 0.1);
+            border: 1px solid rgba(127, 176, 105, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: var(--eco-light);
+            margin-bottom: 2rem;
+        }
+
+        .empty-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            font-size: 1.1rem;
+            color: var(--eco-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-start-shopping {
+            background: linear-gradient(135deg, var(--eco-primary), var(--eco-secondary));
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-start-shopping:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(45, 80, 22, 0.3);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .cart-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .order-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .item-image-container {
+                margin-right: 0;
+            }
+
+            .quantity-controls {
+                margin: 0;
+            }
+
+            .cart-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .cart-container {
+                margin: 2rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .cart-items-section,
+            .order-summary {
+                padding: 1.5rem;
+            }
+
+            .empty-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+{% include 'plantsapp/partials/navbar.html'%}
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="text-center">
+                <h1><i class="fas fa-shopping-cart me-3"></i>Shopping Cart</h1>
+                <p>Review your eco-friendly selections before checkout</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Home</a></li>
+                    <li class="breadcrumb-item"><a href="/products/">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="cart-container">
+        <div class="cart-content">
+            <!-- Cart Items Section -->
+            <div class="cart-items-section fade-in">
+                <div class="cart-header">
+                    <div>
+                        <h2 class="cart-title">Your Cart</h2>
+                        <p class="cart-count">3 items in your cart</p>
+                    </div>
+                    <button class="clear-cart-btn" onclick="clearCart()">
+                        <i class="fas fa-trash me-1"></i>
+                        Clear Cart
+                    </button>
+                </div>
+
+                <!-- Cart Item 1 -->
+                <div class="cart-item">
+                    <div class="item-image-container">
+                        <img src="/placeholder.svg?height=100&width=100" alt="Bamboo Water Bottle" class="item-image">
+                        <span class="item-badge">Eco</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-brand">EcoLife</div>
+                        <h3 class="item-name">Sustainable Bamboo Water Bottle</h3>
+                        <div class="item-features">
+                            <span class="feature-tag">BPA-Free</span>
+                            <span class="feature-tag">Biodegradable</span>
+                        </div>
+                        <div class="item-price">
+                            <span class="original-price">$29.99</span>
+                            $24.99
+                        </div>
+                    </div>
+                    <div class="quantity-controls">
+                        <div>
+                            <div class="quantity-label">Quantity</div>
+                            <div class="quantity-wrapper">
+                                <button class="qty-btn" onclick="decreaseQuantity(1)">-</button>
+                                <input type="number" class="qty-input" value="2" min="1" id="qty-1">
+                                <button class="qty-btn" onclick="increaseQuantity(1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="remove-item-btn" onclick="removeItem(1)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Item 2 -->
+                <div class="cart-item">
+                    <div class="item-image-container">
+                        <img src="/placeholder.svg?height=100&width=100" alt="Cotton Tote Bag" class="item-image">
+                        <span class="item-badge">Organic</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-brand">GreenBag Co.</div>
+                        <h3 class="item-name">Organic Cotton Reusable Tote Bag</h3>
+                        <div class="item-features">
+                            <span class="feature-tag">Fair Trade</span>
+                            <span class="feature-tag">Washable</span>
+                        </div>
+                        <div class="item-price">$18.50</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <div>
+                            <div class="quantity-label">Quantity</div>
+                            <div class="quantity-wrapper">
+                                <button class="qty-btn" onclick="decreaseQuantity(2)">-</button>
+                                <input type="number" class="qty-input" value="1" min="1" id="qty-2">
+                                <button class="qty-btn" onclick="increaseQuantity(2)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="remove-item-btn" onclick="removeItem(2)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Item 3 -->
+                <div class="cart-item">
+                    <div class="item-image-container">
+                        <img src="/placeholder.svg?height=100&width=100" alt="Solar Phone Charger" class="item-image">
+                        <span class="item-badge">Solar</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-brand">SolarTech</div>
+                        <h3 class="item-name">Portable Solar Phone Charger</h3>
+                        <div class="item-features">
+                            <span class="feature-tag">Waterproof</span>
+                            <span class="feature-tag">Fast Charge</span>
+                        </div>
+                        <div class="item-price">$45.99</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <div>
+                            <div class="quantity-label">Quantity</div>
+                            <div class="quantity-wrapper">
+                                <button class="qty-btn" onclick="decreaseQuantity(3)">-</button>
+                                <input type="number" class="qty-input" value="1" min="1" id="qty-3">
+                                <button class="qty-btn" onclick="increaseQuantity(3)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="remove-item-btn" onclick="removeItem(3)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary fade-in">
+                <h3 class="summary-title">Order Summary</h3>
+
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal (4 items)</span>
+                    <span class="summary-value">$89.48</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value">Free</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Tax</span>
+                    <span class="summary-value">$7.16</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Discount</span>
+                    <span class="summary-value discount-value">-$8.95</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Total</span>
+                    <span class="summary-value">$87.69</span>
+                </div>
+
+                <!-- Coupon Section -->
+                <div class="coupon-section">
+                    <div class="coupon-title">
+                        <i class="fas fa-tag"></i>
+                        Have a coupon code?
+                    </div>
+                    <div class="coupon-input-group">
+                        <input type="text" class="form-control coupon-input" placeholder="Enter coupon code">
+                        <button class="apply-coupon-btn">Apply</button>
+                    </div>
+                </div>
+
+                <!-- Checkout Section -->
+                <div class="checkout-section">
+                    <button class="btn-checkout" onclick="proceedToCheckout()">
+                        <i class="fas fa-lock"></i>
+                        Secure Checkout
+                    </button>
+                    <button class="btn-continue-shopping" onclick="continueShopping()">
+                        <i class="fas fa-arrow-left"></i>
+                        Continue Shopping
+                    </button>
+                </div>
+
+                <!-- Security Badges -->
+                <div class="security-badges">
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secure</span>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-truck"></i>
+                        <span>Free Shipping</span>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-undo"></i>
+                        <span>Easy Returns</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty Cart State (uncomment to show when cart is empty) -->
+        <!--
+        <div class="empty-cart fade-in">
+            <div class="empty-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h2 class="empty-title">Your Cart is Empty</h2>
+            <p class="empty-text">
+                Looks like you haven't added any eco-friendly products to your cart yet.
+                Start shopping and make a positive impact on the environment!
+            </p>
+            <a href="/products/" class="btn-start-shopping">
+                <i class="fas fa-leaf"></i>
+                Start Shopping
+            </a>
+        </div>
+        -->
+    </div>
+{% include 'plantsapp/partials/footer.html'%}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Quantity controls
+        function increaseQuantity(itemId) {
+            const input = document.getElementById(`qty-${itemId}`);
+            const currentValue = parseInt(input.value);
+            input.value = currentValue + 1;
+            updateCartTotal();
+        }
+
+        function decreaseQuantity(itemId) {
+            const input = document.getElementById(`qty-${itemId}`);
+            const currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+                updateCartTotal();
+            }
+        }
+
+        // Remove item from cart
+        function removeItem(itemId) {
+            if (confirm('Are you sure you want to remove this item from your cart?')) {
+                // Add your AJAX call here
+                showNotification('Item removed from cart', 'info');
+                // Remove the item from DOM
+                document.querySelector(`[onclick="removeItem(${itemId})"]`).closest('.cart-item').remove();
+                updateCartTotal();
+            }
+        }
+
+        // Clear entire cart
+        function clearCart() {
+            if (confirm('Are you sure you want to clear your entire cart?')) {
+                // Add your AJAX call here
+                showNotification('Cart cleared', 'info');
+                // Clear all items from DOM
+                document.querySelectorAll('.cart-item').forEach(item => item.remove());
+                updateCartTotal();
+            }
+        }
+
+        // Update cart total (placeholder function)
+        function updateCartTotal() {
+            // Add your calculation logic here
+            console.log('Cart total updated');
+        }
+
+        // Proceed to checkout
+        function proceedToCheckout() {
+            showNotification('Redirecting to secure checkout...', 'success');
+            // Add your checkout logic here
+        }
+
+        // Continue shopping
+        function continueShopping() {
+            window.location.href = '/products/';
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                min-width: 300px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Apply coupon code
+        document.querySelector('.apply-coupon-btn').addEventListener('click', function() {
+            const couponInput = document.querySelector('.coupon-input');
+            const couponCode = couponInput.value.trim();
+
+            if (couponCode) {
+                // Add your coupon validation logic here
+                showNotification('Coupon applied successfully!', 'success');
+                couponInput.value = '';
+            } else {
+                showNotification('Please enter a valid coupon code', 'error');
+            }
+        });
+
+        // Update quantities on input change
+        document.querySelectorAll('.qty-input').forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.value < 1) {
+                    this.value = 1;
+                }
+                updateCartTotal();
+            });
+        });
+    </script>
+</body>
+</html>
