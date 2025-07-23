@@ -1,10 +1,10 @@
 :root {
-  --eco-primary: #2d5016;
-  --eco-secondary: #4a7c59;
-  --eco-accent: #7fb069;
-  --eco-light: #d6eadf;
-  --eco-bg: #f8fffe;
-}
+            --eco-primary: #2d5016;
+            --eco-secondary: #4a7c59;
+            --eco-accent: #7fb069;
+            --eco-light: #d6eadf;
+            --eco-bg: #f8fffe;
+        }
 
 * {
   margin: 0;
@@ -26,23 +26,28 @@ body {
   padding: 30px;
   box-shadow: 0 8px 32px rgba(45, 80, 22, 0.1);
 }
+        body {
+            background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-.eco-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(122, 176, 105, 0.2);
-  box-shadow: 0 8px 32px rgba(45, 80, 22, 0.1);
-}
+        .eco-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(122, 176, 105, 0.2);
+            box-shadow: 0 8px 32px rgba(45, 80, 22, 0.1);
+        }
 
-.eco-header {
-  background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
-  color: white;
-}
+        .eco-header {
+            background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+            color: white;
+        }
 
-.form-control:focus {
-  border-color: var(--eco-accent);
-  box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
-}
+        .form-control:focus {
+            border-color: var(--eco-accent);
+            box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
+        }
 
 .btn-eco {
   background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
@@ -53,7 +58,18 @@ body {
   font-weight: 600;
   transition: all 0.3s ease;
 }
+        .btn-eco {
+            background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
 
+        .btn-eco:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.4);
+            color: white;
+        }
 .btn-eco:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(74, 124, 89, 0.4);
@@ -74,34 +90,47 @@ body {
   color: white;
 }
 
-.input-group-text {
-  background-color: var(--eco-light);
-  border-color: var(--eco-accent);
-  color: var(--eco-primary);
-}
+        .input-group-text {
+            background-color: var(--eco-light);
+            border-color: var(--eco-accent);
+            color: var(--eco-primary);
+        }
 
-.eco-icon {
-  color: var(--eco-secondary);
-}
+        .eco-icon {
+            color: var(--eco-secondary);
+        }
 
-.error-list {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 0.375rem;
-}
+        .error-list {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 0.375rem;
+        }
 
-.leaf-decoration {
-  position: absolute;
-  opacity: 0.1;
-  font-size: 2rem;
-  color: var(--eco-accent);
-}
+        .leaf-decoration {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: var(--eco-accent);
+        }
 
-.leaf-1 { top: 10%; left: 10%; }
-.leaf-2 { top: 20%; right: 15%; }
-.leaf-3 { bottom: 30%; left: 5%; }
-.leaf-4 { bottom: 10%; right: 10%; }
+        .leaf-1 { top: 10%; left: 10%; }
+        .leaf-2 { top: 20%; right: 15%; }
+        .leaf-3 { bottom: 30%; left: 5%; }
+        .leaf-4 { bottom: 10%; right: 10%; }
 
+:root {
+            --eco-primary: #2d5016;
+            --eco-secondary: #4a7c59;
+            --eco-accent: #7fb069;
+            --eco-light: #d6eadf;
+            --eco-bg: #f8fffe;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -143,6 +172,12 @@ body {
   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bike" patternUnits="userSpaceOnUse" width="30" height="30"><path d="M15 5C12 8 12 22 15 25C18 22 18 8 15 5Z" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23bike)"/></svg>');
 }
 
+        .eco-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(122, 176, 105, 0.2);
+            box-shadow: 0 8px 32px rgba(45, 80, 22, 0.1);
+        }
 .page-header h1 {
   font-family: 'Playfair Display', serif;
   font-size: 3.5rem;
@@ -617,6 +652,10 @@ body {
   gap: 10px;
 }
 
+        .eco-header {
+            background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+            color: white;
+        }
 .view-btn {
   width: 40px;
   height: 40px;
@@ -636,6 +675,10 @@ body {
   color: white;
 }
 
+        .form-control:focus {
+            border-color: var(--eco-accent);
+            box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
+        }
 .product-count {
   color: var(--eco-secondary);
   font-weight: 500;
@@ -659,6 +702,12 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
 }
 
+        .btn-eco {
+            background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -783,12 +832,22 @@ body {
   transition: all 0.3s ease;
 }
 
+        .btn-eco:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.4);
+            color: white;
+        }
 .add-to-cart:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
   color: white;
 }
 
+        .input-group-text {
+            background-color: var(--eco-light);
+            border-color: var(--eco-accent);
+            color: var(--eco-primary);
+        }
 .pagination-wrapper {
   display: flex;
   justify-content: center;
@@ -1115,6 +1174,9 @@ body {
   color: var(--eco-primary);
 }
 
+        .eco-icon {
+            color: var(--eco-secondary);
+        }
 /* Rating Section */
 .rating-section {
   display: flex;
@@ -1136,11 +1198,22 @@ body {
   font-size: 1.2rem;
 }
 
+        .error-list {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 0.375rem;
+        }
 .rating-text {
   color: #6c757d;
   font-weight: 500;
 }
 
+        .leaf-decoration {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: var(--eco-accent);
+        }
 /* Price Section */
 .price-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1284,6 +1357,10 @@ body {
   background: var(--eco-primary);
   color: white;
 }
+        .leaf-1 { top: 10%; left: 10%; }
+        .leaf-2 { top: 20%; right: 15%; }
+        .leaf-3 { bottom: 30%; left: 5%; }
+        .leaf-4 { bottom: 10%; right: 10%; }
 
 .quantity-controls input {
   border: none;
@@ -1294,6 +1371,13 @@ body {
   background: white;
 }
 
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    overflow-y: auto;
 .action-buttons {
   display: flex;
   gap: 1rem;
@@ -1644,6 +1728,11 @@ body {
   margin-bottom: 1rem;
 }
 
+.login-container .eco-card {
+    max-width: 450px; /* make the card max 400px wide */
+    width: 100%;      /* responsive */
+    margin: 0 auto;   /* center horizontally */
+    box-sizing: border-box;
 .reviewer-info {
   display: flex;
   align-items: center;
