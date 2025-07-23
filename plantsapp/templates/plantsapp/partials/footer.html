@@ -1,0 +1,97 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <!-- Column 1: Logo and Description -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <h5><i class="fas fa-leaf"></i> Leaf Cycles</h5>
+        <p>Your trusted partner for sustainable transportation. We're committed to providing premium bicycles and exceptional service.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="YouTube">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Services -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h5>Our Services</h5>
+        <ul>
+          <li><a href="#products">Bicycle Sales</a></li>
+          <li><a href="#contact">Repair & Maintenance</a></li>
+          <li><a href="#contact">Custom Builds</a></li>
+          <li><a href="#contact">Home Delivery</a></li>
+          <li><a href="#contact">Cycling Lessons</a></li>
+          <li><a href="#contact">Group Tours</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Newsletter and Contact -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h5>Newsletter</h5>
+        <p>Subscribe to get updates on new products and offers.</p>
+        <form class="newsletter-form" action="#" method="post">
+          <div class="input-group">
+            <input type="email" class="form-control" placeholder="Your email address" name="newsletter_email" required>
+            <button class="btn btn-success" type="submit">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </form>
+        <div class="contact-info-footer">
+          <div class="contact-item-footer">
+            <i class="fas fa-phone"></i>
+            <span>+1 (555) 123-4567</span>
+          </div>
+          <div class="contact-item-footer">
+            <i class="fas fa-envelope"></i>
+            <span>info@leafcycles.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Footer Row -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <p>&copy; 2025 Leaf Cycles. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>

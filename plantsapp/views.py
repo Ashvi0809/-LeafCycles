@@ -137,10 +137,18 @@ def product_list(request):
     })
 
 
-
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    return render(request, 'plantsapp/product_detail.html', {'product': product})
+    in_wishlist = False
+
+    if request.user.is_authenticated:
+        in_wishlist = WishlistItem.objects.filter(user=request.user, product=product).exists()
+
+    return render(request, 'plantsapp/product_detail.html', {
+        'product': product,
+        'in_wishlist': in_wishlist
+    })
+
 
 def add_product(request):
     if request.method == 'POST':

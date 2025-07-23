@@ -1,52 +1,597 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Your Wishlist</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - Leaf Cycles</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
     <style>
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f3c1c6;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 30px;
-        }
-        a {
-            text-decoration: none;
-            color: #b30059;
-            font-weight: bold;
-        }
+       :root {
+  --eco-primary: #2d5016;
+  --eco-secondary: #4a7c59;
+  --eco-accent: #7fb069;
+  --eco-light: #d6eadf;
+  --eco-bg: #f8fffe;
+}
+
+body {
+  background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  padding-top: 76px;
+}
+
+/* Header */
+.page-header {
+  background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+  color: white;
+  padding: 4rem 0 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.03) 15px, rgba(255,255,255,0.03) 30px);
+  animation: shimmer 6s linear infinite;
+}
+.page-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+.page-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 2;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%); }
+  100% { transform: translateX(100%) translateY(100%); }
+}
+
+/* Wishlist Grid and Cards */
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.wishlist-item {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(45, 80, 22, 0.1);
+  border: 1px solid rgba(127, 176, 105, 0.1);
+  transition: all 0.4s ease;
+  position: relative;
+}
+.wishlist-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(45, 80, 22, 0.15);
+}
+.item-image-container {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--eco-light) 0%, #ffffff 100%);
+}
+.item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.wishlist-item:hover .item-image {
+  transform: scale(1.05);
+}
+.item-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(45, 80, 22, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.wishlist-item:hover .item-overlay {
+  opacity: 1;
+}
+.overlay-actions {
+  display: flex;
+  gap: 1rem;
+}
+.overlay-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid white;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+.overlay-btn:hover {
+  background: white;
+  color: var(--eco-primary);
+  transform: scale(1.1);
+}
+.remove-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+.remove-btn:hover {
+  background: #dc3545;
+  transform: scale(1.1);
+}
+.item-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.item-content {
+  padding: 1.5rem;
+}
+.item-brand {
+  color: var(--eco-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+.item-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--eco-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+.item-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--eco-primary);
+  margin-bottom: 1rem;
+}
+.item-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.stars {
+  color: #ffc107;
+  font-size: 0.9rem;
+}
+.rating-text {
+  color: #666;
+  font-size: 0.85rem;
+}
+.item-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.btn-add-cart {
+  flex: 1;
+  background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+  border: none;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-add-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+  color: white;
+}
+.btn-view {
+  background: white;
+  border: 2px solid var(--eco-light);
+  color: var(--eco-secondary);
+  padding: 0.75rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+}
+.btn-view:hover {
+  border-color: var(--eco-accent);
+  color: var(--eco-primary);
+  transform: translateY(-2px);
+}
+.wishlist-container {
+  padding: 2rem;
+  margin: 2rem;
+  background: linear-gradient(to bottom right, #f8fffe, #d6eadf);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+
+
+.wishlist-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.wishlist-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--eco-primary);
+  margin: 0;
+}
+
+.wishlist-count {
+  color: var(--eco-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-eco {
+  background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-eco:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+  color: white;
+}
+
+.btn-outline-eco {
+  border: 2px solid var(--eco-accent);
+  color: var(--eco-primary);
+  background: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-outline-eco:hover {
+  background: var(--eco-accent);
+  color: white;
+  transform: translateY(-2px);
+}
+
     </style>
 </head>
-<body>
-    <h1>Your Wishlist ❤️</h1>
 
-    {% if wishlist_items %}
-    <table>
-        <tr>
-            <th>Product</th>
-            <th>Price (₹)</th>
-            <th>Category</th>
-        </tr>
-        {% for item in wishlist_items %}
-        <tr>
-            <td><a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a></td>
-            <td>{{ item.product.price }}</td>
-            <td>{{ item.product.category }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <p style="text-align: center;">Your wishlist is empty.</p>
-    {% endif %}
+<body>
+{% include 'plantsapp/partials/navbar.html'%}
+    <!-- Page Header -->
+   <section class="page-header hero-banner">
+    <div class="container">
+        <div class="row align-items-center text-white">
+            <div class="col-lg-8">
+                <h1><i class="fas fa-heart me-3"></i>My Wishlist</h1>
+                <p>Your carefully curated collection of eco-friendly favorites</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="wishlist-stats">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Breadcrumb -->
+<!--    <div class="breadcrumb-section">-->
+<!--        <div class="container">-->
+<!--            <nav aria-label="breadcrumb">-->
+<!--                <ol class="breadcrumb">-->
+<!--                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Home</a></li>-->
+<!--                    <li class="breadcrumb-item"><a href="/account/">Account</a></li>-->
+<!--                    <li class="breadcrumb-item active" aria-current="page">Wishlist</li>-->
+<!--                </ol>-->
+<!--            </nav>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <!-- Main Content -->
+    <div class="wishlist-container">
+        <!-- Wishlist Header -->
+        <div class="wishlist-header fade-in">
+            <div class="wishlist-actions">
+                <div>
+                    <h2 class="wishlist-title">Your Wishlist</h2>
+                    <p class="wishlist-count">12 eco-friendly products waiting for you</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-outline-eco">
+                        <i class="fas fa-share-alt"></i>
+                        Share Wishlist
+                    </button>
+                    <button class="btn btn-eco">
+                        <i class="fas fa-shopping-cart"></i>
+                        Add All to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wishlist Items -->
+        <div class="wishlist-grid">
+            <!-- Wishlist Item 1 -->
+            <div class="wishlist-item fade-in">
+                <div class="item-image-container">
+                    <img src="/placeholder.svg?height=250&width=320" alt="Eco Bamboo Water Bottle" class="item-image">
+                    <div class="item-overlay">
+                        <div class="overlay-actions">
+                            <button class="overlay-btn" title="Quick View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="overlay-btn" title="Add to Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromWishlist(1)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <span class="item-badge">Eco-Friendly</span>
+                </div>
+                <div class="item-content">
+                    <div class="item-brand">EcoLife</div>
+                    <h3 class="item-title">Sustainable Bamboo Water Bottle</h3>
+                    <div class="item-price">$24.99</div>
+                    <div class="item-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">4.8 (124 reviews)</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-add-cart" onclick="addToCart(1)">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn-view">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlist Item 2 -->
+            <div class="wishlist-item fade-in">
+                <div class="item-image-container">
+                    <img src="/placeholder.svg?height=250&width=320" alt="Organic Cotton Tote Bag" class="item-image">
+                    <div class="item-overlay">
+                        <div class="overlay-actions">
+                            <button class="overlay-btn" title="Quick View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="overlay-btn" title="Add to Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromWishlist(2)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <span class="item-badge">Organic</span>
+                </div>
+                <div class="item-content">
+                    <div class="item-brand">GreenBag Co.</div>
+                    <h3 class="item-title">Organic Cotton Reusable Tote Bag</h3>
+                    <div class="item-price">$18.50</div>
+                    <div class="item-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <span class="rating-text">4.2 (89 reviews)</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-add-cart" onclick="addToCart(2)">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn-view">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlist Item 3 -->
+            <div class="wishlist-item fade-in">
+                <div class="item-image-container">
+                    <img src="/placeholder.svg?height=250&width=320" alt="Solar Phone Charger" class="item-image">
+                    <div class="item-overlay">
+                        <div class="overlay-actions">
+                            <button class="overlay-btn" title="Quick View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="overlay-btn" title="Add to Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromWishlist(3)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <span class="item-badge">Solar Powered</span>
+                </div>
+                <div class="item-content">
+                    <div class="item-brand">SolarTech</div>
+                    <h3 class="item-title">Portable Solar Phone Charger</h3>
+                    <div class="item-price">$45.99</div>
+                    <div class="item-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">4.9 (156 reviews)</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-add-cart" onclick="addToCart(3)">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn-view">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more wishlist items as needed -->
+        </div>
+
+        <!-- Empty State (uncomment to show when wishlist is empty) -->
+        <!--
+        <div class="empty-wishlist fade-in">
+            <div class="empty-icon">
+                <i class="fas fa-heart-broken"></i>
+            </div>
+            <h2 class="empty-title">Your Wishlist is Empty</h2>
+            <p class="empty-text">
+                Start building your collection of eco-friendly favorites! Browse our sustainable products and add items you love to your wishlist.
+            </p>
+            <a href="/products/" class="btn-shop-now">
+                <i class="fas fa-leaf"></i>
+                Start Shopping
+            </a>
+        </div>
+        -->
+    </div>
+{% include 'plantsapp/partials/footer.html'%}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Remove from wishlist
+        function removeFromWishlist(itemId) {
+            if (confirm('Are you sure you want to remove this item from your wishlist?')) {
+                // Add your AJAX call here
+                showNotification('Item removed from wishlist', 'info');
+                // Remove the item from DOM
+                document.querySelector(`[onclick="removeFromWishlist(${itemId})"]`).closest('.wishlist-item').remove();
+            }
+        }
+
+        // Add to cart
+        function addToCart(itemId) {
+            // Add your AJAX call here
+            showNotification('Item added to cart!', 'success');
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                min-width: 300px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
 </body>
 </html>

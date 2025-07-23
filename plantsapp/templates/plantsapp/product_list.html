@@ -1,528 +1,270 @@
 {% load static %}
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bicycle Products & Accessories - Leaf Cycles</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bicycle Products & Accessories - Leaf Cycles</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css ">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="{% static 'plantsapp/css/style.css' %}" rel="stylesheet" />
-
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="{% static 'plantsapp/css/style.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
+  <style>
+    .product-card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .category-item {
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+    }
+    .category-item.active {
+      background-color: #e6f4ea;
+      font-weight: 600;
+    }
+    .sidebar {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Bicycle Products & Accessories</h1>
-            <p>Everything you need for your cycling journey</p>
+
+<!-- Page Header with Overlay -->
+{% include 'plantsapp/partials/navbar.html'%}
+<section class="page-header text-white text-center position-relative" style="background: url('{% static 'plantsapp/images/hero-bg.jpg' %}') no-repeat center center; background-size: cover; min-height: 30vh; display: flex; align-items: center;">
+  <!-- Dark overlay -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.5); z-index: 1;"></div>
+
+  <!-- Content -->
+  <div class="container position-relative" style="z-index: 2;">
+    <h1 class="display-5 fw-bold">Bicycle Products & Accessories</h1>
+    <p class="lead">Everything you need for your cycling journey</p>
+  </div>
+</section>
+
+
+<div class="container-fluid mt-4 px-0">
+  <div class="row">
+
+<!-- Sidebar -->
+<div class="col-lg-2 mb-4">
+  <div class="sidebar">
+    <h5><i class="fas fa-filter me-2"></i>Collection</h5>
+    <ul class="category-list list-unstyled">
+      <li class="category-item" data-category="all">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <div><i class="fas fa-list me-2"></i> All</div>
+          <span class="category-count text-end">{{ products|length }}</span>
         </div>
-    </section>
-
-    <div class="container-fluid mt-4 px-0">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-3 mb-4">
-                <div class="sidebar">
-                    <h5><i class="fas fa-filter me-2"></i>Collection</h5>
-                    <ul class="category-list">
-                        <li class="category-item active" data-category="all">
-                            <span>All</span>
-                            <span class="category-count">156</span>
-                        </li>
-                        <li class="category-item" data-category="bikes">
-                            <span>Bikes</span>
-                            <span class="category-count">45</span>
-                        </li>
-                        <li class="category-item" data-category="accessories">
-                            <span>Accessories</span>
-                            <span class="category-count">67</span>
-                        </li>
-                        <li class="category-item" data-category="parts">
-                            <span>Parts & Components</span>
-                            <span class="category-count">89</span>
-                        </li>
-                        <li class="category-item" data-category="safety">
-                            <span>Safety Gear</span>
-                            <span class="category-count">34</span>
-                        </li>
-                        <li class="category-item" data-category="maintenance">
-                            <span>Maintenance</span>
-                            <span class="category-count">28</span>
-                        </li>
-                        <li class="category-item" data-category="clothing">
-                            <span>Cycling Clothing</span>
-                            <span class="category-count">52</span>
-                        </li>
-                        <li class="category-item" data-category="electronics">
-                            <span>Electronics</span>
-                            <span class="category-count">23</span>
-                        </li>
-                    </ul>
-
-                    <div class="promo-banner">
-                        <div class="promo-text">
-                            <i class="fas fa-tag me-2"></i>Get 15% OFF
-                        </div>
-                    </div>
-
-                    <div class="text-center">
-                        <div class="organic-badge">
-                            <i class="fas fa-leaf"></i>
-                            100% Eco-Friendly
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-lg-9 me-0 pe-0">
-                <div class="main-content">
-                    <!-- Content Header -->
-                    <div class="content-header">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="me-3">View As:</span>
-                            <div class="view-options">
-                                <button class="view-btn" data-view="2">
-                                    <i class="fas fa-th-large"></i>
-                                </button>
-                                <button class="view-btn active" data-view="3">
-                                    <i class="fas fa-th"></i>
-                                </button>
-                                <button class="view-btn" data-view="4">
-                                    <i class="fas fa-grip-horizontal"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="product-count">
-                            <strong>156 products</strong>
-                        </div>
-
-                        <div class="controls">
-                            <div class="d-flex align-items-center gap-2">
-                                <span>Display:</span>
-                                <select class="form-select" style="width: auto;">
-                                    <option>12 per page</option>
-                                    <option>24 per page</option>
-                                    <option>36 per page</option>
-                                </select>
-                            </div>
-
-                            <div class="d-flex align-items-center gap-2">
-                                <span>Sort by:</span>
-                                <select class="form-select" style="width: auto;">
-                                    <option>Best selling</option>
-                                    <option>Price: Low to High</option>
-                                    <option>Price: High to Low</option>
-                                    <option>Newest First</option>
-                                    <option>Customer Rating</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Grid -->
-                    <div class="product-grid" id="productGrid" >
-                        <!-- Product 1 -->
-                        <div class="product-card" data-category="accessories">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Eco Helmet">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Leaf Cycles</div>
-                                <h6 class="product-title">Eco-Friendly Bicycle Helmet</h6>
-                                <div class="product-price">$45</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">28 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(1)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Product 2 -->
-                        <div class="product-card" data-category="accessories">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Bamboo Water Bottle">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Green Essentials</div>
-                                <h6 class="product-title">Bamboo Water Bottle Set</h6>
-                                <div class="product-price">$25</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">42 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(2)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Product 3 -->
-                        <div class="product-card" data-category="maintenance">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Bike Cleaning Kit">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Eco Clean</div>
-                                <h6 class="product-title">Natural Bike Cleaning Kit</h6>
-                                <div class="product-price">$32</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">19 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(3)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
+      </li>
 
 
-                        <!-- Product 4 -->
-                        <div class="product-card" data-category="safety">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="LED Light Set">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Bright Ride</div>
-                                <h6 class="product-title">Solar LED Light Set</h6>
-                                <div class="product-price">$38</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">67 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(4)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
+  <li class="category-item" data-category="bikes">
+    <div><i class="fas fa-shopping-basket me-2"></i> Grocery & Food</div>
+  </li>
 
-                        <!-- Product 5 -->
-                        <div class="product-card" data-category="parts">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Chain Lubricant">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Green Lube</div>
-                                <h6 class="product-title">Organic Chain Lubricant</h6>
-                                <div class="product-price">$18</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">34 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(5)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
+  <li class="category-item" data-category="accessories">
+    <div><i class="fas fa-pen me-2"></i> Office & Stationary</div>
+  </li>
 
-                        <!-- Product 6 -->
-                        <div class="product-card" data-category="accessories">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Phone Mount">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Mount Pro</div>
-                                <h6 class="product-title">Sustainable Phone Mount</h6>
-                                <div class="product-price">$29</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">51 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(6)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
+  <li class="category-item" data-category="parts">
+    <div><i class="fas fa-microchip me-2"></i> Tech & Gadgets</div>
+  </li>
 
-                        <!-- Product 7 -->
-                        <div class="product-card" data-category="clothing">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Cycling Gloves">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Eco Wear</div>
-                                <h6 class="product-title">Organic Cotton Cycling Gloves</h6>
-                                <div class="product-price">$22</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">26 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(7)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
+  <li class="category-item" data-category="safety">
+    <div><i class="fas fa-seedling me-2"></i> Garden & Outdoors</div>
+  </li>
 
-                        <!-- Product 8 -->
-                        <div class="product-card" data-category="electronics">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Bike Computer">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Smart Cycle</div>
-                                <h6 class="product-title">Solar Bike Computer</h6>
-                                <div class="product-price">$89</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">73 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(8)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
+  <li class="category-item" data-category="maintenance">
+    <div><i class="fas fa-child me-2"></i> Kids</div>
+  </li>
 
-                        <!-- Product 9 -->
-                        <div class="product-card" data-category="accessories">
-                            <div class="product-image">
-                                <img src="/placeholder.svg?height=220&width=280" alt="Bike Panniers">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">Canvas Co</div>
-                                <h6 class="product-title">Eco Canvas Panniers</h6>
-                                <div class="product-price">$65</div>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">38 reviews</span>
-                                </div>
-                                <button class="add-to-cart" onclick="addToCart(9)">
-                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+  <li class="category-item" data-category="clothing">
+    <div><i class="fas fa-suitcase-rolling me-2"></i> On-the-Go Essentials</div>
+  </li>
 
-                    <!-- Pagination -->
-                    <div class="pagination-wrapper">
-                        <nav aria-label="Product pagination">
-                            <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">1</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">2</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">3</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">4</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
+  <li class="category-item" data-category="electronics">
+    <div><i class="fas fa-blender me-2"></i> Kitchen & Dining</div>
+  </li>
+
+  <li class="category-item" data-category="fashion">
+    <div><i class="fas fa-tshirt me-2"></i> Fashion & Accessories</div>
+  </li>
+
+  <li class="category-item" data-category="personal-care">
+    <div><i class="fas fa-spa me-2"></i> Personal Care & Wellness</div>
+  </li>
+
+  <li class="category-item" data-category="home-living">
+    <div><i class="fas fa-couch me-2"></i> Home & Living</div>
+  </li>
+</ul>
+
+       <div class="promo-banner mt-4" style="padding: 6px 12px;">
+  <div class="promo-text" style="font-size: 1rem;"><i class="fas fa-tag me-2"></i>Get 15% OFF</div>
+</div>
+
+
+        <div class="text-center mt-3">
+          <div class="organic-badge">
+            <i class="fas fa-leaf"></i> 100% Eco-Friendly
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Product Grid -->
+    <div class="col-lg-10 me-0 pe-0">
+      <div class="main-content">
+        <div class="content-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <span class="me-3">View As:</span>
+            <div class="view-options">
+              <button class="view-btn" data-view="2"><i class="fas fa-th-large"></i></button>
+              <button class="view-btn active" data-view="3"><i class="fas fa-th"></i></button>
+              <button class="view-btn" data-view="4"><i class="fas fa-grip-horizontal"></i></button>
+            </div>
+          </div>
+          <div class="product-count">
+            <strong>{{ products|length }} products</strong>
+          </div>
+          <div class="controls d-flex gap-3">
+            <div class="d-flex align-items-center gap-2">
+              <span>Display:</span>
+              <select class="form-select form-select-sm" style="width: auto;">
+                <option>12 per page</option>
+                <option>24 per page</option>
+                <option>36 per page</option>
+              </select>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span>Sort by:</span>
+              <select class="form-select form-select-sm" style="width: auto;">
+                <option>Best selling</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Newest First</option>
+                <option>Customer Rating</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-    <script>
-        // Category filtering
-        document.querySelectorAll('.category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // Remove active class from all items
-                document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
-                // Add active class to clicked item
-                this.classList.add('active');
+        <div class="product-grid" id="productGrid">
+          {% for product in products %}
+          <a href="{% url 'product_detail' pk=product.id %}" class="product-card-link">
+            <div class="product-card" data-category="{{ product.category }}">
+              <div class="product-image">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                <button class="wishlist-btn" onclick="event.preventDefault(); toggleWishlist(this, {{ product.id }})">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+                </button>
+              </div>
+              <div class="product-info">
+                <div class="product-brand">{{ product.brand }}</div>
+                <h6 class="product-title">{{ product.name }}</h6>
+                <div class="product-price">${{ product.price }}</div>
+                <div class="product-rating">
+                  <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="far fa-star"></i>
+                  </div>
+                  <span class="rating-text">{{ product.reviews.count }} reviews</span>
+                </div>
+                <button class="add-to-cart" onclick="event.preventDefault(); addToCart({{ product.id }})">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                </button>
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
 
-                const category = this.getAttribute('data-category');
-                const products = document.querySelectorAll('.product-card');
+        <!-- Pagination Placeholder -->
+        <div class="pagination-wrapper mt-4">
+          <nav>
+            <ul class="pagination">
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'plantsapp/partials/footer.html'%}
 
-                products.forEach(product => {
-                    if (category === 'all' || product.getAttribute('data-category') === category) {
-                        product.style.display = 'block';
-                    } else {
-                        product.style.display = 'none';
-                    }
-                });
 
-                // Update product count (simplified)
-                const visibleProducts = document.querySelectorAll('.product-card[style="display: block"], .product-card:not([style*="display: none"])').length;
-                document.querySelector('.product-count strong').textContent = ${visibleProducts} products;
-            });
-        });
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        // View options
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+<!-- Filtering & Wishlist JS -->
+<script>
+  document.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', function () {
+      document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
 
-                const view = this.getAttribute('data-view');
-                const grid = document.getElementById('productGrid');
-
-                // Adjust grid columns based on view
-                switch(view) {
-                    case '2':
-                        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(400px, 1fr))';
-                        break;
-                    case '3':
-                        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
-                        break;
-                    case '4':
-                        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
-                        break;
-                }
-            });
-        });
-
-        // Wishlist functionality
-        function toggleWishlist(btn) {
-            btn.classList.toggle('active');
-            const icon = btn.querySelector('i');
-
-            if (btn.classList.contains('active')) {
-                icon.classList.remove('far');
-                icon.classList.add('fas');
-                showNotification('Added to wishlist!', 'success');
-            } else {
-                icon.classList.remove('fas');
-                icon.classList.add('far');
-                showNotification('Removed from wishlist!', 'info');
-            }
+      const category = this.getAttribute('data-category');
+      document.querySelectorAll('.product-card').forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.parentElement.style.display = 'block';
+        } else {
+          card.parentElement.style.display = 'none';
         }
+      });
+    });
+  });
 
-        // Add to cart functionality
-        function addToCart(productId) {
-            showNotification('Added to cart!', 'success');
-            console.log('Adding product', productId, 'to cart');
-        }
+  function toggleWishlist(btn, productId) {
+    event.stopPropagation();
+    const icon = btn.querySelector('i');
+    const active = icon.classList.contains('fas');
+    icon.classList.toggle('fas', !active);
+    icon.classList.toggle('far', active);
+    fetch(`/wishlist/${productId}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    });
+  }
 
-        // Notification system
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = alert alert-${type === 'success' ? 'success' : 'info'} position-fixed;
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                ${message}
-            `;
+  function addToCart(productId) {
+    event.stopPropagation();
+    fetch(`/cart/${productId}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    }).then(res => {
+      if (res.ok) showNotification('Added to cart!', 'success');
+    });
+  }
 
-            document.body.appendChild(notification);
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type}`;
+    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+    notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>${message}`;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  }
 
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+</script>
 </body>
 </html>
