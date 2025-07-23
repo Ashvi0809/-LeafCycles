@@ -18,7 +18,7 @@ from django.http import JsonResponse
 from .models import CartItem
 from django.db.models import Count
 from django.views.decorators.http import require_POST
-
+from .models import ContactMessage
 
 from .models import Product
 from django.contrib.auth.decorators import login_required
@@ -226,3 +226,21 @@ def rate_product(request, product_id):
 
     return redirect("product_list")  # or use `request.META.get('HTTP_REFERER')`
 
+def home_view(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+
+        ContactMessage.objects.create(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message
+        )
+
+        # Optional: success message or redirect
+        return redirect('home')  # or render same page with a success message
+
+    return render(request, 'plantsapp/home.html')
