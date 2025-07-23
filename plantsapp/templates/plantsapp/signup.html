@@ -1,137 +1,164 @@
-{% load static %}
 
+
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Join LeafCycles</title>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-      font-family: 'Inter', sans-serif;
-    }
-
-    .signup-box {
-      max-width: 500px;
-      margin: 60px auto;
-      background-color: #fff;
-      border: 1px solid #d1fae5;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-      overflow: hidden;
-    }
-
-    .signup-header {
-      background: linear-gradient(to right, #15803d, #22c55e);
-      color: white;
-      text-align: center;
-      padding: 2rem 1rem 1rem 1rem;
-    }
-
-    .signup-header h2 {
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .signup-header .bi {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .form-icon-group {
-      display: flex;
-      align-items: center;
-      border: 1px solid #cbd5e1;
-      border-radius: 0.5rem;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .form-icon-group i {
-      font-size: 1.2rem;
-      color: #15803d;
-      margin-right: 0.75rem;
-    }
-
-    .form-icon-group input {
-      border: none;
-      outline: none;
-      flex-grow: 1;
-    }
-
-    .btn-green {
-      background: linear-gradient(to right, #15803d, #22c55e);
-      color: white;
-      font-weight: 600;
-      border-radius: 2rem;
-      padding: 0.6rem;
-      width: 100%;
-      border: none;
-      transition: background 0.3s;
-    }
-
-    .btn-green:hover {
-      background: #166534;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EcoConnect - Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="{% static 'plantsapp/css/style.css' %}" rel="stylesheet" />
 </head>
 <body>
+    <div class="container-fluid position-relative">
+        <!-- Decorative leaves -->
+        <i class="fas fa-leaf leaf-decoration leaf-1"></i>
+        <i class="fas fa-seedling leaf-decoration leaf-2"></i>
+        <i class="fas fa-leaf leaf-decoration leaf-3"></i>
+        <i class="fas fa-tree leaf-decoration leaf-4"></i>
 
-<div class="signup-box">
-  <div class="signup-header">
-    <i class="bi bi-leaf-fill"></i>
-    <h2>Join LeafCycles</h2>
-    <p>Be part of the green revolution</p>
-  </div>
+        <div class="row justify-content-center align-items-center min-vh-100 py-5">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card eco-card border-0 rounded-4 overflow-hidden">
+                    <!-- Header -->
+                    <div class="eco-header text-center py-4">
+                        <i class="fas fa-leaf fs-1 mb-3"></i>
+                        <h2 class="mb-1">Join EcoConnect</h2>
+                        <p class="mb-0 opacity-75">Be part of the green revolution</p>
+                    </div>
 
-  <form method="POST" class="p-4">
-    {% csrf_token %}
+                    <!-- Form Body -->
+                    <div class="card-body p-4">
+                        <form method="post">
+                            {% csrf_token %}
 
-    <label class="form-label">Full Name</label>
-    <div class="form-icon-group">
-      <i class="bi bi-person-fill"></i>
-      <input type="text" name="name" placeholder="Enter your full name" required>
+                            <!-- Name Field -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-semibold text-muted">
+                                    <i class="fas fa-user eco-icon me-2"></i>Full Name
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                           placeholder="Enter your full name" required>
+                                </div>
+                            </div>
+
+                            <!-- Email Field -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold text-muted">
+                                    <i class="fas fa-envelope eco-icon me-2"></i>Email Address
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                           placeholder="your.email@example.com" required>
+                                </div>
+                            </div>
+
+                            <!-- Phone Number Field -->
+                            <div class="mb-3">
+                                <label for="number" class="form-label fw-semibold text-muted">
+                                    <i class="fas fa-phone eco-icon me-2"></i>Phone Number
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-phone"></i>
+                                    </span>
+                                    <input type="tel" class="form-control" id="number" name="number"
+                                           placeholder="Enter your phone number" required>
+                                </div>
+                            </div>
+
+                            <!-- Pincode Field -->
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label fw-semibold text-muted">
+                                    <i class="fas fa-map-marker-alt eco-icon me-2"></i>Pincode
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="pincode" name="pincode"
+                                           placeholder="Enter your pincode" required>
+                                </div>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-semibold text-muted">
+                                    <i class="fas fa-lock eco-icon me-2"></i>Password
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           placeholder="Create a strong password" required>
+                                </div>
+                            </div>
+
+                            <!-- Confirm Password Field -->
+                            <div class="mb-4">
+                                <label for="confirm_password" class="form-label fw-semibold text-muted">
+                                    <i class="fas fa-lock eco-icon me-2"></i>Confirm Password
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                           placeholder="Confirm your password" required>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-eco btn-lg py-3 rounded-3">
+                                    <i class="fas fa-seedling me-2"></i>
+                                    Join the Green Community
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Error Messages -->
+                        {% if errors %}
+                        <div class="mt-4">
+                            <div class="alert alert-danger error-list" role="alert">
+                                <h6 class="alert-heading mb-2">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Please fix the following errors:
+                                </h6>
+                                <ul class="mb-0 ps-3">
+                                    {% for field, error_list in errors.items %}
+                                    <li class="mb-1">
+                                        <strong>{{ field|title }}:</strong> {{ error_list.0 }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Footer Message -->
+                        <div class="text-center mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-leaf text-success me-1"></i>
+                                By signing up, you're taking a step towards a greener future
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <label class="form-label">Email Address</label>
-    <div class="form-icon-group">
-      <i class="bi bi-envelope-fill"></i>
-      <input type="email" name="email" placeholder="your.email@example.com" required>
-    </div>
-
-    <label class="form-label">Phone Number</label>
-    <div class="form-icon-group">
-      <i class="bi bi-telephone-fill"></i>
-      <input type="text" name="number" placeholder="Enter your phone number" required>
-    </div>
-
-    <label class="form-label">Pincode</label>
-    <div class="form-icon-group">
-      <i class="bi bi-geo-alt-fill"></i>
-      <input type="text" name="pincode" placeholder="Enter your pincode" required>
-    </div>
-
-    <label class="form-label">Password</label>
-    <div class="form-icon-group">
-      <i class="bi bi-lock-fill"></i>
-      <input type="password" name="password" placeholder="Create a strong password" required>
-    </div>
-
-    <label class="form-label">Confirm Password</label>
-    <div class="form-icon-group">
-      <i class="bi bi-lock-fill"></i>
-      <input type="password" name="confirm_password" placeholder="Confirm your password" required>
-    </div>
-
-    <button type="submit" class="btn-green mt-2">Create Account</button>
-  </form>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

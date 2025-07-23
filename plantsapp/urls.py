@@ -15,6 +15,9 @@ from .views import (
     product_detail
 )
 from . import views
+from django.contrib import admin
+from django.urls import path, include
+
 
 urlpatterns = [
     # HTML Form Views
@@ -31,6 +34,9 @@ urlpatterns = [
     path('wishlist/', views.wishlist_view, name='wishlist'),
     path('cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart_view, name='cart'),
+path('', views.landing_page, name='landing'),
+    path('', views.landing_page, name='landing'),
+
 
 
 ]
