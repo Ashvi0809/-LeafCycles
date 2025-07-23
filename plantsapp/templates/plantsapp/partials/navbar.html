@@ -22,7 +22,7 @@
         <a class="nav-link" href="#about">About</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#products">Products</a>
+        <a class="nav-link" href="{% url 'product_list' %}">Products</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#contact">Contact</a>
@@ -42,12 +42,13 @@
 
 
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Wishlist">
-        <a href="#" class="text-dark"><i class="fas fa-heart"></i></a>
+      <a href="{% url 'wishlist' %}" class="text-dark"><i class="fas fa-heart"></i></a>
+
         <span class="badge rounded-pill bg-danger">3</span>
       </div>
 
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Shopping Cart">
-        <a href="#" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
+       <a href="{% url 'cart' %}" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
         <span class="badge rounded-pill bg-danger">2</span>
       </div>
 
