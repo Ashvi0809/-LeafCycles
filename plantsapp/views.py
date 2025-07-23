@@ -209,3 +209,5 @@ def cart_view(request):
         'cart_items': cart_items,
         'total_price': total_price
     })
+def landing_page(request):
+    return render(request, 'plantsapp/landing.html')
