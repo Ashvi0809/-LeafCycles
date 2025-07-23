@@ -384,6 +384,60 @@ body {
         </div>
 
         <!-- Wishlist Items -->
+        {% for item in wishlist_items %}
+<div class="wishlist-item fade-in">
+    <div class="item-image-container">
+        {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-image">
+        {% else %}
+            <img src="{% static 'plantsapp/images/placeholder.svg' %}" alt="No image" class="item-image">
+        {% endif %}
+        <div class="item-overlay">
+            <div class="overlay-actions">
+                <button class="overlay-btn" title="Quick View" onclick="window.location.href='{% url 'product_detail' item.product.id %}'">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="overlay-btn" title="Add to Cart" onclick="addToCart({{ item.product.id }})">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+            </div>
+        </div>
+        <button class="remove-btn" onclick="removeFromWishlist({{ item.product.id }})">
+            <i class="fas fa-times"></i>
+        </button>
+        <span class="item-badge">Eco-Friendly</span>
+    </div>
+    <div class="item-content">
+        <div class="item-brand">{{ item.product.brand|default:"LeafCycles" }}</div>
+        <h3 class="item-title">{{ item.product.name }}</h3>
+        <div class="item-price">${{ item.product.price }}</div>
+        <div class="item-rating">
+            <div class="stars">
+                {% for i in "12345" %}
+                    <i class="{% if item.product.avg_rating|default:0 >= forloop.counter %}fas{% else %}far{% endif %} fa-star"></i>
+                {% endfor %}
+            </div>
+            <span class="rating-text">{{ item.product.reviews.count }} reviews</span>
+        </div>
+        <div class="item-actions">
+            <button class="btn-add-cart" onclick="addToCart({{ item.product.id }})">
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+            <button class="btn-view" onclick="window.location.href='{% url 'product_detail' item.product.id %}'">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="text-center">
+    <h3>Your wishlist is empty ❤️</h3>
+    <a href="{% url 'product_list' %}" class="btn btn-success mt-3">
+        <i class="fas fa-leaf me-1"></i> Start Shopping
+    </a>
+</div>
+{% endfor %}
+
         <div class="wishlist-grid">
             <!-- Wishlist Item 1 -->
             <div class="wishlist-item fade-in">
