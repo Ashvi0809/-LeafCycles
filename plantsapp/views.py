@@ -19,7 +19,7 @@ from .models import CartItem
 from django.db.models import Count
 from django.views.decorators.http import require_POST
 from .models import ContactMessage
-
+from .models import Category
 from .models import Product
 from django.contrib.auth.decorators import login_required
 
@@ -127,6 +127,7 @@ class ResetPasswordView(APIView):
 
 def product_list(request):
     products = Product.objects.annotate(review_count=Count('reviews'))
+    categories = Category.objects.all()
     wishlist_ids = []
 
     if request.user.is_authenticated:
@@ -134,9 +135,10 @@ def product_list(request):
 
     return render(request, 'plantsapp/product_list.html', {
         'products': products,
-        'wishlist_ids': list(wishlist_ids)
+        'wishlist_ids': list(wishlist_ids),
+        'categories': categories,
+        'selected_category': None
     })
-
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -244,3 +246,33 @@ def home_view(request):
         return redirect('home')  # or render same page with a success message
 
     return render(request, 'plantsapp/home.html')
+
+def wishlist_count(request):
+    if request.user.is_authenticated:
+        count = WishlistItem.objects.filter(user=request.user).count()
+    else:
+        count = 0
+    return {'wishlist_count': count}
+
+def cart_count(request):
+    if request.user.is_authenticated:
+        count = CartItem.objects.filter(user=request.user).count()
+    else:
+        count = 0
+    return {'cart_count': count}
+
+def product_list_by_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category)
+    categories = Category.objects.all()
+
+    wishlist_ids = []
+    if request.user.is_authenticated:
+        wishlist_ids = WishlistItem.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    return render(request, 'plantsapp/product_list.html', {
+        'products': products,
+        'wishlist_ids': list(wishlist_ids),
+        'selected_category': category,
+        'categories': categories,
+    })

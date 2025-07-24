@@ -42,15 +42,20 @@
 
 
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Wishlist">
-      <a href="{% url 'wishlist' %}" class="text-dark"><i class="fas fa-heart"></i></a>
+  <a href="{% url 'wishlist' %}" class="text-dark"><i class="fas fa-heart"></i></a>
+  {% if wishlist_count > 0 %}
+    <span class="badge rounded-pill bg-danger">{{ wishlist_count }}</span>
+  {% endif %}
+</div>
 
-        <span class="badge rounded-pill bg-danger">3</span>
-      </div>
 
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Shopping Cart">
-       <a href="{% url 'cart' %}" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
-        <span class="badge rounded-pill bg-danger">2</span>
-      </div>
+  <a href="{% url 'cart' %}" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
+  {% if cart_count > 0 %}
+    <span class="badge rounded-pill bg-danger">{{ cart_count }}</span>
+  {% endif %}
+</div>
+
 
        <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Account">
         <a href="#" class="text-dark"><i class="fas fa-user"></i></a>
