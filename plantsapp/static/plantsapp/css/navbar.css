@@ -5,8 +5,10 @@
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   border-bottom: 2px solid #e2e2e2;
-  position: sticky;
+  position: fixed; /* Change sticky to fixed */
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 999;
 }
 

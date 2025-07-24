@@ -1,13 +1,12 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-blur shadow-sm fixed-top">
+
   <div class="container-fluid py-2 d-flex justify-content-between align-items-center flex-nowrap">
 
     <!-- Left Section: Logo -->
     <a href="{% url 'home' %}" class="d-flex align-items-center text-decoration-none">
-      <!-- If logo image available, use below -->
-      <!-- <img src="{% static 'plantsapp/images/leaf-logo.png' %}" alt="Leaf Logo" width="40" height="40" class="me-2"> -->
       <i class="fas fa-leaf fa-2x me-2 text-success"></i>
-      <span class="fw-bold fs-4 text-darkgreen">Leaf<span class="text-success">Cycles</span></span>
+      <span class="fw-bold fs-4 text-darkgreen"><span class="text-success">LeafCycles</span></span>
     </a>
 
     <!-- Center Section: Nav Links -->
@@ -38,26 +37,24 @@
         <button class="btn search-btn" type="submit"><i class="fas fa-search"></i></button>
       </form>
 
-      <!-- User Icons -->
-
-
+      <!-- Wishlist Icon -->
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Wishlist">
-  <a href="{% url 'wishlist' %}" class="text-dark"><i class="fas fa-heart"></i></a>
-  {% if wishlist_count > 0 %}
-    <span class="badge rounded-pill bg-danger">{{ wishlist_count }}</span>
-  {% endif %}
-</div>
+        <a href="{% url 'wishlist' %}" class="text-dark"><i class="fas fa-heart"></i></a>
+        {% if wishlist_count > 0 %}
+          <span class="badge rounded-pill bg-danger">{{ wishlist_count }}</span>
+        {% endif %}
+      </div>
 
-
+      <!-- Cart Icon -->
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Shopping Cart">
-  <a href="{% url 'cart' %}" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
-  {% if cart_count > 0 %}
-    <span class="badge rounded-pill bg-danger">{{ cart_count }}</span>
-  {% endif %}
-</div>
+        <a href="{% url 'cart' %}" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
+        {% if cart_count > 0 %}
+          <span class="badge rounded-pill bg-danger">{{ cart_count }}</span>
+        {% endif %}
+      </div>
 
-
-       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Account">
+      <!-- Account Icon -->
+      <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Account">
         <a href="#" class="text-dark"><i class="fas fa-user"></i></a>
       </div>
     </div>

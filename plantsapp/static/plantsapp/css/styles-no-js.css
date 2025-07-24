@@ -3,6 +3,9 @@ body, html {
   margin: 0;
   padding: 0;
 }
+body {
+  padding-top: 80px; /* or match your navbar height */
+}
 
 :root {
   --primary-color: #2d5a27;
