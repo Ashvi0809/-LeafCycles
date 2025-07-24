@@ -19,7 +19,8 @@ from .views import (
     add_to_cart,
     cart_view,
     landing_page,
-    rate_product
+    rate_product,
+    product_list_by_category
 )
 
 urlpatterns = [
@@ -35,6 +36,7 @@ urlpatterns = [
     path('products/', product_list, name='product_list'),
     path('products/<int:pk>/', product_detail, name='product_detail'),
     path('add-product/', add_product, name='add-product'),
+path('products/category/<int:category_id>/',product_list_by_category, name='products_by_category'),
 
     # Wishlist & Cart
     path('wishlist/<int:product_id>/', toggle_wishlist, name='toggle_wishlist'),

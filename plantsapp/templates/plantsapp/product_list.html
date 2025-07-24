@@ -61,55 +61,52 @@
 <div class="col-lg-2 mb-4">
   <div class="sidebar">
     <h5><i class="fas fa-filter me-2"></i>Collection</h5>
-    <ul class="category-list list-unstyled">
-      <li class="category-item" data-category="all">
-        <div class="d-flex justify-content-between align-items-center w-100">
-          <div><i class="fas fa-list me-2"></i> All</div>
-          <span class="category-count text-end">{{ products|length }}</span>
+  <ul class="category-list list-unstyled">
+  <li class="category-item {% if not selected_category %}active{% endif %}">
+    <a href="{% url 'product_list' %}" class="d-flex justify-content-between align-items-center text-dark text-decoration-none">
+      <div><i class="fas fa-list me-2"></i> All</div>
+      <span class="category-count text-end">{{ products|length }}</span>
+    </a>
+  </li>
+
+  {% for cat in categories %}
+  <li class="category-item {% if selected_category.id == cat.id %}active{% endif %}">
+    <a href="{% url 'products_by_category' cat.id %}" class="text-dark text-decoration-none w-100">
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <div>
+          {% if "Grocery" in cat.name %}
+            <i class="fas fa-shopping-basket me-2"></i>
+          {% elif "Office" in cat.name %}
+            <i class="fas fa-pen me-2"></i>
+          {% elif "Tech" in cat.name %}
+            <i class="fas fa-microchip me-2"></i>
+          {% elif "Garden" in cat.name %}
+            <i class="fas fa-seedling me-2"></i>
+          {% elif "Kids" in cat.name %}
+            <i class="fas fa-child me-2"></i>
+          {% elif "Essentials" in cat.name %}
+            <i class="fas fa-suitcase-rolling me-2"></i>
+          {% elif "Kitchen" in cat.name %}
+            <i class="fas fa-blender me-2"></i>
+          {% elif "Fashion" in cat.name %}
+            <i class="fas fa-tshirt me-2"></i>
+          {% elif "Personal" in cat.name %}
+            <i class="fas fa-spa me-2"></i>
+          {% elif "Home" in cat.name %}
+            <i class="fas fa-couch me-2"></i>
+          {% else %}
+            <i class="fas fa-tag me-2"></i>
+          {% endif %}
+          {{ cat.name }}
         </div>
-      </li>
-
-
-  <li class="category-item" data-category="bikes">
-    <div><i class="fas fa-shopping-basket me-2"></i> Grocery & Food</div>
+        <span class="category-count">{{ cat.product_set.count }}</span>
+      </div>
+    </a>
   </li>
+{% endfor %}
 
-  <li class="category-item" data-category="accessories">
-    <div><i class="fas fa-pen me-2"></i> Office & Stationary</div>
-  </li>
-
-  <li class="category-item" data-category="parts">
-    <div><i class="fas fa-microchip me-2"></i> Tech & Gadgets</div>
-  </li>
-
-  <li class="category-item" data-category="safety">
-    <div><i class="fas fa-seedling me-2"></i> Garden & Outdoors</div>
-  </li>
-
-  <li class="category-item" data-category="maintenance">
-    <div><i class="fas fa-child me-2"></i> Kids</div>
-  </li>
-
-  <li class="category-item" data-category="clothing">
-    <div><i class="fas fa-suitcase-rolling me-2"></i> On-the-Go Essentials</div>
-  </li>
-
-  <li class="category-item" data-category="electronics">
-    <div><i class="fas fa-blender me-2"></i> Kitchen & Dining</div>
-  </li>
-
-  <li class="category-item" data-category="fashion">
-    <div><i class="fas fa-tshirt me-2"></i> Fashion & Accessories</div>
-  </li>
-
-  <li class="category-item" data-category="personal-care">
-    <div><i class="fas fa-spa me-2"></i> Personal Care & Wellness</div>
-  </li>
-
-  <li class="category-item" data-category="home-living">
-    <div><i class="fas fa-couch me-2"></i> Home & Living</div>
-  </li>
 </ul>
+
 
        <div class="promo-banner mt-4" style="padding: 6px 12px;">
   <div class="promo-text" style="font-size: 1rem;"><i class="fas fa-tag me-2"></i>Get 15% OFF</div>
