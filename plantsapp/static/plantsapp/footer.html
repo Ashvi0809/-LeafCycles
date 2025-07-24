@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Footer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2d5a27;
+      --light-green: #a7c957;
+      --accent-color: #7fb069;
+      --dark-color: #1a1a1a;
+      --gradient-secondary: linear-gradient(135deg, #7fb069 0%, #a7c957 100%);
+      --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .footer {
+      background: var(--dark-color);
+      color: white;
+      padding: 40px 0 20px;
+    }
+
+    .footer h5 {
+      color: var(--light-green);
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .footer p {
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+
+    .footer a {
+      color: #ccc;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: block;
+      padding: 3px 0;
+      font-size: 0.9rem;
+    }
+
+    .footer a:hover {
+      color: var(--light-green);
+      transform: translateX(5px);
+    }
+
+    .footer ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer ul li {
+      margin-bottom: 8px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .social-link {
+      width: 45px;
+      height: 45px;
+      background: var(--gradient-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .social-link i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .social-link:hover {
+      background: var(--light-green);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-medium);
+      color: white;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #333;
+      margin-top: 30px;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .footer-bottom p {
+      margin: 0;
+      font-size: 0.85rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      display: inline-block;
+      padding: 0;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .footer h5 {
+        font-size: 1.1rem;
+      }
+
+      .footer p,
+      .footer a {
+        font-size: 0.85rem;
+      }
+
+      .social-link {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 15px;
+      }
+
+      .footer-links {
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .footer {
+        padding: 25px 0 10px;
+      }
+
+      .footer h5 {
+        font-size: 1rem;
+      }
+
+      .footer p {
+        font-size: 0.8rem;
+      }
+
+      .social-link {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+      }
+
+      .footer-links {
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <footer class="footer">
+    <div class="container px-4">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h5>🌿 Leaf Cycles</h5>
+          <p>Your trusted partner for sustainable transportation. We're committed to providing premium bicycles and exceptional service.</p>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-md-2 mb-4">
+          <h5>Quick Links</h5>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Products</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5>Our Services</h5>
+          <ul>
+            <li><a href="#">Bicycle Sales</a></li>
+            <li><a href="#">Repair & Maintenance</a></li>
+            <li><a href="#">Custom Builds</a></li>
+            <li><a href="#">Home Delivery</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5>Newsletter</h5>
+          <p>Subscribe to receive updates, offers, and promotions.</p>
+          <form class="newsletter-form">
+            <div class="input-group">
+              <input type="email" class="form-control" placeholder="Your Email">
+              <button class="btn text-white" type="submit">Subscribe</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom mt-4">
+        <p>© 2025 Leaf Cycles. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
