@@ -1,4 +1,6 @@
 {% load static %}
+{% csrf_token %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -671,12 +673,14 @@
                 <div class="cart-header">
                     <div>
                         <h2 class="cart-title">Your Cart</h2>
-                        <p class="cart-count">3 items in your cart</p>
+                        <p class="cart-count">{{ cart_items|length }} item{{ cart_items|length|pluralize:"s" }} in your cart</p>
                     </div>
-                    <button class="clear-cart-btn" onclick="clearCart()">
-                        <i class="fas fa-trash me-1"></i>
-                        Clear Cart
-                    </button>
+                    <form method="POST" action="{% url 'clear_cart' %}">
+  {% csrf_token %}
+  <button type="submit" id="clear-cart-btn" class="btn btn-danger">
+    <i class="fas fa-trash"></i> Clear Cart
+  </button>
+</form>
                 </div>
         ``             {% for item in cart_items %}
         <div class="cart-item">
@@ -694,17 +698,17 @@
             <h3 class="item-name">{{ item.product.name }}</h3>
             <div class="item-price">${{ item.product.price }}</div>
           </div>
-
-          <div class="quantity-controls">
-            <div class="quantity-label">Quantity</div>
-            <div class="quantity-wrapper">
-              <button class="qty-btn" onclick="decreaseQuantity({{ item.id }})">-</button>
-              <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" id="qty-{{ item.id }}">
-              <button class="qty-btn" onclick="increaseQuantity({{ item.id }})">+</button>
-            </div>
+        <div class="quantity-controls">
+          <div class="quantity-label">Quantity</div>
+          <div class="quantity-wrapper">
+            <button class="qty-btn decrease-btn" data-product-id="{{ item.product.id }}">−</button>
+            <span class="qty-display">{{ item.quantity }}</span>
+            <button class="qty-btn increase-btn" data-product-id="{{ item.product.id }}">+</button>
           </div>
+        </div>
 
-          <button class="remove-item-btn" onclick="removeItem({{ item.id }})">
+
+         <button class="remove-item-btn" data-product-id="{{ item.product.id }}">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -716,8 +720,10 @@
                 <h3 class="summary-title">Order Summary</h3>
 
                 <div class="summary-row">
-                    <span class="summary-label">Subtotal (4 items)</span>
-                    <span class="summary-value">$89.48</span>
+                   <span class="summary-value">${{ subtotal }}</span>
+                    <span class="summary-value">${{ tax }}</span>
+                    <span class="summary-value discount-value">-${{ discount }}</span>
+                    <span class="summary-value">${{ total }}</span>
                 </div>
 
                 <div class="summary-row">
@@ -727,17 +733,17 @@
 
                 <div class="summary-row">
                     <span class="summary-label">Tax</span>
-                    <span class="summary-value">$7.16</span>
+                    <span class="summary-value">${{ tax }}</span>
                 </div>
 
                 <div class="summary-row">
                     <span class="summary-label">Discount</span>
-                    <span class="summary-value discount-value">-$8.95</span>
+                    <span class="summary-value discount-value">-${{ discount }}</span>
                 </div>
 
                 <div class="summary-row">
                     <span class="summary-label">Total</span>
-                    <span class="summary-value">$87.69</span>
+                    <span class="summary-value">${{ total }}</span>
                 </div>
 
                 <!-- Coupon Section -->
@@ -919,3 +925,140 @@
     </script>
 </body>
 </html>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    // Increase Quantity
+    document.querySelectorAll(".increase-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const productId = btn.getAttribute("data-product-id");
+        updateQuantity(productId, "increase");
+      });
+    });
+
+    // Decrease Quantity
+    document.querySelectorAll(".decrease-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const productId = btn.getAttribute("data-product-id");
+        updateQuantity(productId, "decrease");
+      });
+    });
+
+    // Delete Item
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const productId = btn.getAttribute("data-product-id");
+        fetch(`/cart/delete/${productId}/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCSRFToken(),
+          }
+        }).then(() => location.reload());
+      });
+    });
+
+    // Clear Cart
+    const clearBtn = document.getElementById("clear-cart");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        fetch(`/cart/clear/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCSRFToken(),
+          }
+        }).then(() => location.reload());
+      });
+    }
+
+    // Helper to update quantity
+    function updateQuantity(productId, action) {
+      fetch(`/cart/update/${productId}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCSRFToken(),
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `action=${action}`
+      }).then(() => location.reload());
+    }
+
+    // Helper to get CSRF token from cookie
+    function getCSRFToken() {
+      const cookie = document.cookie.match(/csrftoken=([\w-]+)/);
+      return cookie ? cookie[1] : "";
+    }
+
+  });
+</script>
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+document.querySelectorAll(".remove-item-btn").forEach(button => {
+  button.addEventListener("click", function () {
+    const productId = this.dataset.productId;
+
+    fetch(`/cart/delete/${productId}/`, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+        "Content-Type": "application/json"
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "deleted") {
+        location.reload();
+      } else {
+        alert("Delete failed");
+      }
+    });
+  });
+});
+</script>
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+document.getElementById("clear-cart-btn").addEventListener("click", function () {
+  fetch("/cart/clear/", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Content-Type": "application/json"
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === "cleared") {
+      location.reload();
+    } else {
+      alert("Cart could not be cleared.");
+    }
+  });
+});
+</script>
