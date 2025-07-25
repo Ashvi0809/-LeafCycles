@@ -276,3 +276,10 @@ def product_list_by_category(request, category_id):
         'selected_category': category,
         'categories': categories,
     })
+
+@login_required
+def profile_view(request):
+    return render(request, 'plantsapp/profile.html', {'user': request.user})
+
+
+

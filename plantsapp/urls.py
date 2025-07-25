@@ -20,8 +20,12 @@ from .views import (
     cart_view,
     landing_page,
     rate_product,
-    product_list_by_category
+    product_list_by_category,
+    profile_view,
+    add_product
 )
+from . import views
+
 
 urlpatterns = [
     # HTML Form Views
@@ -47,6 +51,10 @@ path('products/category/<int:category_id>/',product_list_by_category, name='prod
 
     #  Landing Page
     path('', landing_page, name='landing'),
+
+    path('profile/', profile_view, name='profile'),
+    path('add-product/', add_product, name='add_product'),
+
 ]
 from django.conf import settings
 from django.conf.urls.static import static

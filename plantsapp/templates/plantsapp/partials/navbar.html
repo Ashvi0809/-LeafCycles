@@ -31,11 +31,22 @@
     <!-- Right Section: Search and Icons -->
     <div class="d-flex align-items-center gap-3">
 
+
       <!-- Search Box -->
-      <form class="search-box d-flex align-items-center" action="#" method="GET">
-        <input type="text" class="form-control" placeholder="Search bikes, parts, accessories" />
-        <button class="btn search-btn" type="submit"><i class="fas fa-search"></i></button>
-      </form>
+<form class="d-flex align-items-center" action="#" method="GET" style="border: 2px solid #c9e4c5; border-radius: 30px; overflow: hidden; background-color: #fdfdfd;">
+  <input
+    type="text"
+    name="search"
+    placeholder="Cotton-bags, Bamboo-Toothbrushes, ..."
+    style="border: none; padding: 10px 15px; outline: none; flex-grow: 1; font-weight: 500; color: #333; background-color: #fdfdfd;"
+  />
+  <button
+    type="submit"
+    style="background-color: #a7c957; border: none; padding: 10px 16px; color: white; cursor: pointer;"
+  >
+    <i class="fas fa-search"></i>
+  </button>
+</form>
 
       <!-- Wishlist Icon -->
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Wishlist">
@@ -55,8 +66,11 @@
 
       <!-- Account Icon -->
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Account">
-        <a href="#" class="text-dark"><i class="fas fa-user"></i></a>
-      </div>
+  <a href="{% url 'profile' %}" class="text-dark">
+    <i class="fas fa-user"></i>
+  </a>
+</div>
+
     </div>
   </div>
 </nav>

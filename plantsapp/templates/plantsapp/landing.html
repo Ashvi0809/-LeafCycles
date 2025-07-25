@@ -4,362 +4,839 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leaf Cycles - Sustainable Marketplace</title>
-
+  <title>LeafCycles - Eco-Friendly Marketplace</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
 
   <style>
     :root {
       --primary-color: #2d5a27;
-      --light-green: #a7c957;
+      --secondary-color: #4a7c59;
       --accent-color: #7fb069;
-      --dark-color: #1a1a1a;
+      --light-green: #a7c957;
       --gradient-primary: linear-gradient(135deg, #2d5a27 0%, #4a7c59 50%, #7fb069 100%);
       --gradient-secondary: linear-gradient(135deg, #7fb069 0%, #a7c957 100%);
+      --dark-color: #1a1a1a;
+      --light-color: #f8f9fa;
+      --white: #ffffff;
+      --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.08);
       --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.12);
+      --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
       font-family: "Poppins", sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f6fdf8;
+      line-height: 1.6;
+      color: var(--dark-color);
+      background: var(--light-color);
+      padding-top: 80px; /* For fixed navbar */
     }
 
-    /* Typography Enhancements */
-    h2 {
-      font-weight: 800;
-      font-family: 'Poppins', sans-serif;
-      letter-spacing: 0.5px;
-      color: #1a1a1a;
-    }
-
-    h6, .section-badge {
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      letter-spacing: 1.2px;
-      color: #5d9b5a;
-      font-weight: 600;
-    }
-
-    /* Navbar */
-    .navbar {
-      background-color: #ffffff;
-      border-bottom: 1px solid #ddd;
-      padding: 10px 20px;
-      position: sticky;
+    /* Landing Header */
+    .landing-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: fixed;
       top: 0;
+      left: 0;
+      right: 0;
       z-index: 1000;
+      border-bottom: 1px solid rgba(45, 90, 39, 0.1);
     }
 
-    .navbar-brand .brand-text {
-      font-weight: 900;
-      font-size: 1.6rem;
-      background: linear-gradient(to right, #a7c957 0%, #2d5a27 70%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-link {
+    .landing-header .btn {
+      border-radius: 25px;
       font-weight: 600;
-      color: var(--primary-color);
+      transition: all 0.3s ease;
     }
 
-    .nav-link:hover {
-      color: var(--accent-color);
+    .landing-header .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
-    /* Hero */
+    /* Hero Section */
     .hero-section {
       background: var(--gradient-primary);
-      color: #fff;
-      text-align: center;
-      padding: 60px 20px 90px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
       position: relative;
+      overflow: hidden;
+      padding: 100px 0;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaf" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M10 2C6 2 2 6 2 10s4 8 8 8 8-4 8-8-4-8-8-8z" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaf)"/></svg>') repeat;
+      opacity: 0.1;
+    }
+
+    .floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .floating-leaf {
+      position: absolute;
+      color: rgba(167, 201, 87, 0.3);
+      font-size: 2rem;
+      animation: floatLeaf 8s ease-in-out infinite;
+    }
+
+    .leaf-1 { top: 20%; left: 10%; animation-delay: 0s; }
+    .leaf-2 { top: 60%; right: 10%; animation-delay: 2s; }
+    .leaf-3 { top: 30%; right: 30%; animation-delay: 4s; }
+    .leaf-4 { top: 80%; left: 20%; animation-delay: 6s; }
+    .leaf-5 { top: 10%; left: 80%; animation-delay: 1s; }
+
+    @keyframes floatLeaf {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-15px) rotate(5deg); }
+      66% { transform: translateY(-5px) rotate(-3deg); }
     }
 
     .hero-content {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 60px 40px;
-      border-radius: 30px;
-      max-width: 900px;
-      margin: 0 auto;
-      color: var(--primary-color);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      color: white;
     }
 
-    .tagline {
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 12px 25px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 1s ease-out;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: var(--accent-color);
+      letter-spacing: 1px;
     }
 
-    .main-title {
+    .hero-title {
       font-family: "Playfair Display", serif;
-      font-size: 3rem;
-      font-weight: bold;
+      font-size: 4.5rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      line-height: 1.1;
+      animation: fadeInUp 1s ease-out 0.2s both;
     }
 
-    .description {
-      color: #666;
-      font-size: 1rem;
-      margin: 20px 0 40px;
+    .hero-subtitle {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      animation: fadeInUp 1s ease-out 0.4s both;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+      animation: fadeInUp 1s ease-out 0.6s both;
     }
 
     .btn-auth {
-      padding: 12px 30px;
-      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 35px;
+      border: none;
       border-radius: 50px;
-      margin: 10px;
-      transition: 0.3s;
-      text-decoration: none !important;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.4s ease;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      font-size: 0.9rem;
+      min-width: 180px;
+      justify-content: center;
     }
 
     .btn-signin {
-      background: var(--gradient-primary);
+      background: var(--gradient-secondary);
       color: white;
-      border: none;
+      box-shadow: var(--shadow-medium);
+    }
+
+    .btn-signin::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-signin:hover::before {
+      left: 100%;
+    }
+
+    .btn-signin:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-heavy);
+      color: white;
+      text-decoration: none;
     }
 
     .btn-signup {
-      background: white;
-      color: var(--primary-color);
-      border: 2px solid var(--primary-color);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
     }
 
-    .btn-auth:hover {
-      text-decoration: none !important;
+    .btn-signup:hover {
+      background: white;
+      color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-heavy);
+      text-decoration: none;
     }
 
     .features-mini {
       display: flex;
-      justify-content: space-around;
-      margin-top: 30px;
+      justify-content: center;
+      gap: 40px;
       flex-wrap: wrap;
+      animation: fadeInUp 1s ease-out 0.8s both;
     }
 
     .feature-mini {
       text-align: center;
-      flex: 1 1 150px;
-      margin: 10px;
+      color: white;
+      min-width: 120px;
     }
 
     .feature-mini i {
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: var(--light-green);
+      margin-bottom: 15px;
+      display: block;
     }
 
-    .step-card, .trust-item {
-      background: #fff;
-      border-radius: 20px;
-      padding: 25px;
+    .feature-mini span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    /* Section Styles */
+    .section {
+      padding: 120px 0;
+    }
+
+    .section-header {
       text-align: center;
-      box-shadow: var(--shadow-medium);
+      margin-bottom: 80px;
     }
 
-    .step-number {
-      font-size: 1.2rem;
-      font-weight: bold;
+    .section-badge {
+      display: inline-block;
+      background: var(--gradient-primary);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: "Playfair Display", serif;
+      font-size: 3.2rem;
+      font-weight: 700;
       color: var(--primary-color);
-      margin-bottom: 10px;
+      margin-bottom: 25px;
+      line-height: 1.2;
     }
 
-    .trust-icon i {
+    .section-description {
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      background: var(--light-color);
+    }
+
+    .step-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+      transition: all 0.4s ease;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient-primary);
+      transition: left 0.5s ease;
+      z-index: 1;
+    }
+
+    .step-card:hover::before {
+      left: 0;
+    }
+
+    .step-card:hover {
+      transform: translateY(-15px);
+      box-shadow: var(--shadow-heavy);
+      color: white;
+    }
+
+    .step-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--gradient-secondary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 0 auto 25px;
+      transition: all 0.4s ease;
+    }
+
+    .step-card:hover .step-icon {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .step-card h5 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      transition: color 0.4s ease;
+    }
+
+    .step-card:hover h5 {
+      color: white;
+    }
+
+    .step-card p {
+      color: #666;
+      line-height: 1.6;
+      transition: color 0.4s ease;
+    }
+
+    .step-card:hover p {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Trust Section */
+    .trust-section {
+      background: white;
+    }
+
+    .trust-item {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trust-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--gradient-secondary);
+    }
+
+    .trust-item:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-heavy);
+      border-color: var(--accent-color);
+    }
+
+    .trust-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 2rem;
-      color: var(--light-green);
+      margin: 0 auto 20px;
+      transition: all 0.3s ease;
+    }
+
+    .trust-item:hover .trust-icon {
+      transform: scale(1.1);
     }
 
     .trust-number {
-      font-size: 1.8rem;
-      font-weight: bold;
-      margin-top: 10px;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
     }
 
     .trust-label {
-      color: #555;
+      color: #666;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
     }
 
+    /* Newsletter Section */
     .newsletter-section {
-      background: var(--primary-color);
+      background: var(--gradient-primary);
       color: white;
-      padding: 60px 20px;
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .newsletter-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaf" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M10 2C6 2 2 6 2 10s4 8 8 8 8-4 8-8-4-8-8-8z" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaf)"/></svg>') repeat;
+      opacity: 0.1;
+    }
+
+    .newsletter-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .newsletter-title {
+      font-family: "Playfair Display", serif;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .newsletter-description {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .newsletter-form {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      max-width: 500px;
+      margin: 0 auto;
     }
 
     .newsletter-input {
-      padding: 12px 20px;
+      flex: 1;
+      min-width: 250px;
+      padding: 18px 25px;
       border: none;
-      border-radius: 30px;
-      margin-right: 10px;
-      width: 300px;
-      max-width: 100%;
+      border-radius: 50px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .newsletter-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .newsletter-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--light-green);
+      box-shadow: 0 0 0 3px rgba(167, 201, 87, 0.3);
     }
 
     .newsletter-btn {
-      padding: 12px 25px;
+      padding: 18px 35px;
       border: none;
-      border-radius: 30px;
+      border-radius: 50px;
       background: var(--light-green);
       color: white;
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
     }
 
-    .footer {
-      background: var(--dark-color);
-      color: white;
-      padding: 40px 0;
+    .newsletter-btn:hover {
+      background: white;
+      color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-heavy);
     }
 
-    .footer a {
-      color: #ccc;
-      text-decoration: none;
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .footer a:hover {
-      color: var(--light-green);
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 70px;
+      }
 
-}
-   .step-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #a7c957;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  margin: 0 auto 10px;
-}
+      .hero-section {
+        padding: 80px 0;
+        min-height: 90vh;
+      }
 
+      .hero-title {
+        font-size: 3rem;
+      }
 
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
 
+      .auth-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn-auth {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .features-mini {
+        gap: 20px;
+      }
+
+      .section {
+        padding: 80px 0;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+      }
+
+      .newsletter-title {
+        font-size: 2.2rem;
+      }
+
+      .newsletter-form {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .newsletter-input {
+        min-width: auto;
+        width: 100%;
+      }
+
+      .newsletter-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .newsletter-title {
+        font-size: 1.8rem;
+      }
+
+      .step-card,
+      .trust-item {
+        padding: 30px 20px;
+      }
+    }
   </style>
 </head>
+
 <body>
+  <!-- Simple Landing Header -->
+  <header class="landing-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center py-3">
+        <a href="/" class="d-flex align-items-center text-decoration-none">
+          <i class="fas fa-leaf fa-2x me-2" style="color: #a7c957;"></i>
+          <span class="fw-bold fs-4" style="color: #2d5a27;">LeafCycles</span>
+        </a>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-      <i class="fas fa-leaf fa-lg" style="color: #a7c957;"></i>
-      <span class="brand-text">Leaf Cycles</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav fw-semibold">
-        <li class="nav-item"><a class="nav-link text-dark" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link text-dark" href="#">Explore</a></li>
-        <li class="nav-item"><a class="nav-link text-dark" href="#">Sell</a></li>
-        <li class="nav-item"><a class="nav-link text-dark" href="#">About</a></li>
-        <li class="nav-item"><a class="nav-link text-dark" href="#">Contact</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<!-- Hero -->
-<section class="hero-section">
-  <div class="hero-content">
-    <div class="tagline">Sustainable Marketplace</div>
-    <h1 class="main-title">Shop Sustainably, Live Responsibly</h1>
-    <p class="description">
-      Discover thousands of eco-friendly, recyclable, and sustainable products from trusted brands. Join our community of conscious consumers making a positive impact on the planet.
-    </p>
-    <div class="auth-buttons">
-      <a href="{% url 'login-form' %}" class="btn-auth btn-signin"><i class="fas fa-sign-in-alt"></i> Sign In</a>
-      <a href="{% url 'signup-form' %}" class="btn-auth btn-signup"><i class="fas fa-user-plus"></i> Sign Up</a>
-    </div>
-    <div class="features-mini">
-      <div class="feature-mini"><i class="fas fa-shield-alt"></i><br>100% Verified</div>
-      <div class="feature-mini"><i class="fas fa-shipping-fast"></i><br>Carbon Neutral</div>
-      <div class="feature-mini"><i class="fas fa-recycle"></i><br>Fully Recyclable</div>
-      <div class="feature-mini"><i class="fas fa-award"></i><br>Premium Quality</div>
-    </div>
-  </div>
-</section>
-<!-- How It Works -->
-<section class="how-it-works" style="background-color: #f5fcf5; padding: 60px 0;">
-  <div class="container text-center">
-    <h6>How It Works</h6>
-    <h2>Simple Steps to Sustainable Shopping & Selling</h2>
-    <div class="d-flex flex-wrap justify-content-center gap-4 mt-4">
-      <div class="step-card" style="width: 250px;">
-        <div class="step-icon">1</div>
-        <h5>Create Account</h5>
-        <p>Join our eco-conscious community of buyers and sellers.</p>
-      </div>
-      <div class="step-card" style="width: 250px;">
-        <div class="step-icon">2</div>
-        <h5>Browse or List Products</h5>
-        <p>Find sustainable goods or start selling your eco-friendly items.</p>
-      </div>
-      <div class="step-card" style="width: 250px;">
-        <div class="step-icon">3</div>
-        <h5>Make Transactions</h5>
-        <p>Buy or sell with confidence — certified for sustainability and quality.</p>
-      </div>
-      <div class="step-card" style="width: 250px;">
-        <div class="step-icon">4</div>
-        <h5>Track Impact</h5>
-        <p>See your carbon savings and contribution to a greener future.</p>
+        <div class="d-flex gap-3">
+          <a href="{% url 'login-form' %}" class="btn btn-outline-success btn-sm px-4">Login</a>
+          <a href="{% url 'signup-form' %}" class="btn btn-success btn-sm px-4">Sign Up</a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </header>
 
-
-<!-- Trust Section -->
-<section class="py-5 bg-light">
-  <div class="container text-center">
-    <h6 class="section-badge">Trusted by Thousands</h6>
-    <h2>Our Impact So Far</h2>
-    <div class="row mt-4 g-4">
-      <div class="col-md-3"><div class="trust-item"><div class="trust-icon"><i class="fas fa-users"></i></div><span class="trust-number">50K+</span><div class="trust-label">Happy Customers</div></div></div>
-      <div class="col-md-3"><div class="trust-item"><div class="trust-icon"><i class="fas fa-tree"></i></div><span class="trust-number">25K</span><div class="trust-label">Trees Saved</div></div></div>
-      <div class="col-md-3"><div class="trust-item"><div class="trust-icon"><i class="fas fa-globe"></i></div><span class="trust-number">100K</span><div class="trust-label">Kg CO₂ Reduced</div></div></div>
-      <div class="col-md-3"><div class="trust-item"><div class="trust-icon"><i class="fas fa-recycle"></i></div><span class="trust-number">15K</span><div class="trust-label">Items Recycled</div></div></div>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="floating-elements">
+      <div class="floating-leaf leaf-1"><i class="fas fa-leaf"></i></div>
+      <div class="floating-leaf leaf-2"><i class="fas fa-leaf"></i></div>
+      <div class="floating-leaf leaf-3"><i class="fas fa-leaf"></i></div>
+      <div class="floating-leaf leaf-4"><i class="fas fa-leaf"></i></div>
+      <div class="floating-leaf leaf-5"><i class="fas fa-leaf"></i></div>
     </div>
-  </div>
-</section>
 
-<!-- Newsletter -->
-<section class="newsletter-section">
-  <div class="container text-center">
-  <h2 class="fw-bold text-center display-6"><span style="color: white;">
-  Stay Updated on Sustainability</span>
-</h2>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fas fa-award"></i>
+          <span>Sustainable Marketplace</span>
+        </div>
+        <h1 class="hero-title">Shop Sustainably,<br>Live Responsibly</h1>
+        <p class="hero-subtitle">
+          Discover thousands of eco-friendly, recyclable, and sustainable products from trusted brands. Join our community of conscious consumers making a positive impact on the planet.
+        </p>
 
-    <p class="mb-4">Get the latest eco-friendly tips and product updates straight to your inbox.</p>
-    <form class="d-flex justify-content-center">
-      <input type="email" class="newsletter-input" placeholder="Enter your email" required>
-      <button type="submit" class="newsletter-btn"><i class="fas fa-paper-plane"></i> Subscribe</button>
-    </form>
-  </div>
-</section>
+        <div class="auth-buttons">
+          <a href="{% url 'login-form' %}" class="btn-auth btn-signin">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Sign In</span>
+          </a>
+          <a href="{% url 'signup-form' %}" class="btn-auth btn-signup">
+            <i class="fas fa-user-plus"></i>
+            <span>Sign Up</span>
+          </a>
+        </div>
 
-<!-- Footer -->
-<footer class="footer text-center">
-  <div class="container">
-    <p>&copy; 2025 Leaf Cycles. All rights reserved.</p>
-    <div class="d-flex justify-content-center gap-4">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms</a>
-      <a href="#">Sitemap</a>
+        <div class="features-mini">
+          <div class="feature-mini">
+            <i class="fas fa-shield-alt"></i>
+            <span>100% Verified</span>
+          </div>
+          <div class="feature-mini">
+            <i class="fas fa-shipping-fast"></i>
+            <span>Carbon Neutral</span>
+          </div>
+          <div class="feature-mini">
+            <i class="fas fa-recycle"></i>
+            <span>Fully Recyclable</span>
+          </div>
+          <div class="feature-mini">
+            <i class="fas fa-award"></i>
+            <span>Premium Quality</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</footer>
+  </section>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- How It Works Section -->
+  <section class="section how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">How It Works</div>
+        <h2 class="section-title">Simple Steps to Sustainable Shopping & Selling</h2>
+        <p class="section-description">
+          Join thousands of eco-conscious users who are making a difference through sustainable commerce
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="step-card">
+            <div class="step-icon">1</div>
+            <h5>Create Account</h5>
+            <p>Join our eco-conscious community of buyers and sellers committed to sustainable living.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="step-card">
+            <div class="step-icon">2</div>
+            <h5>Browse or List Products</h5>
+            <p>Find sustainable goods or start selling your eco-friendly items to like-minded consumers.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="step-card">
+            <div class="step-icon">3</div>
+            <h5>Make Transactions</h5>
+            <p>Buy or sell with confidence — all products are certified for sustainability and quality.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="step-card">
+            <div class="step-icon">4</div>
+            <h5>Track Impact</h5>
+            <p>Monitor your carbon savings and see your contribution to building a greener future.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Section -->
+  <section class="section trust-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Trusted by Thousands</div>
+        <h2 class="section-title">Our Environmental Impact</h2>
+        <p class="section-description">
+          Together, we're creating measurable change for our planet's future
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="trust-item">
+            <div class="trust-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="trust-number">50K+</div>
+            <div class="trust-label">Happy Customers</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="trust-item">
+            <div class="trust-icon">
+              <i class="fas fa-tree"></i>
+            </div>
+            <div class="trust-number">25K</div>
+            <div class="trust-label">Trees Saved</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="trust-item">
+            <div class="trust-icon">
+              <i class="fas fa-globe"></i>
+            </div>
+            <div class="trust-number">100K</div>
+            <div class="trust-label">Kg CO₂ Reduced</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="trust-item">
+            <div class="trust-icon">
+              <i class="fas fa-recycle"></i>
+            </div>
+            <div class="trust-number">15K</div>
+            <div class="trust-label">Items Recycled</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2 class="newsletter-title">Stay Updated on Sustainability</h2>
+        <p class="newsletter-description">
+          Get the latest eco-friendly tips, product updates, and sustainability insights delivered straight to your inbox.
+        </p>
+        <form class="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+          <button type="submit" class="newsletter-btn">
+            <i class="fas fa-paper-plane"></i>
+            <span>Subscribe</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Include Footer -->
+  {% include 'plantsapp/partials/footer.html' %}
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
