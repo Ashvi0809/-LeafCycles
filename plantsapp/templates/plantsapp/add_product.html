@@ -1,17 +1,751 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Product</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - Leaf Cycles</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+    <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
+
+    <style>
+:root {
+    --eco-primary: #2d5016;
+    --eco-secondary: #4a7c59;
+    --eco-accent: #7fb069;
+    --eco-light: #d6eadf;
+    --eco-bg: #f8fffe;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    padding-top: 76px;
+}
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+    color: white;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 15px,
+        rgba(255,255,255,0.03) 15px,
+        rgba(255,255,255,0.03) 30px
+    );
+    animation: shimmer 6s linear infinite;
+}
+
+.page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%); }
+    100% { transform: translateX(100%) translateY(100%); }
+}
+
+/* Main Container */
+.add-product-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(45, 80, 22, 0.1);
+    border: 1px solid rgba(127, 176, 105, 0.1);
+}
+
+.form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--eco-primary);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: var(--eco-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--eco-light) 0%, #ffffff 100%);
+    border-radius: 15px;
+    border: 1px solid rgba(127, 176, 105, 0.2);
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--eco-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 600;
+    color: var(--eco-primary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.required-asterisk {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* Form Inputs - FIXED */
+input.form-control,
+textarea.form-control,
+select.form-select {
+    border: 2px solid var(--eco-light);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    background: white;
+    color: #1f3d1f !important; /* Enforce dark green text */
+    transition: all 0.3s ease;
+}
+
+/* Focus + Hover */
+input.form-control:focus,
+textarea.form-control:focus,
+select.form-select:focus {
+    color: #1f3d1f !important; /* Enforce dark green text on focus */
+    border-color: var(--eco-accent);
+    box-shadow: 0 0 0 0.25rem rgba(127, 176, 105, 0.25);
+    background: white;
+}
+
+input.form-control:hover,
+textarea.form-control:hover,
+select.form-select:hover {
+    border-color: var(--eco-secondary);
+}
+
+/* Placeholders - FIXED */
+input.form-control::placeholder,
+textarea.form-control::placeholder,
+select.form-select::placeholder {
+    color: #2d5016 !important; /* Darker placeholder color */
+    opacity: 1;
+}
+
+/* Image Upload */
+.image-upload-container {
+    position: relative;
+    border: 3px dashed var(--eco-light);
+    border-radius: 15px;
+    padding: 3rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #ffffff 0%, var(--eco-bg) 100%);
+    cursor: pointer;
+}
+
+.image-upload-container:hover {
+    border-color: var(--eco-accent);
+    background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+}
+
+.image-upload-container.dragover {
+    border-color: var(--eco-secondary);
+    background: var(--eco-light);
+}
+
+.upload-icon {
+    font-size: 4rem;
+    color: var(--eco-accent);
+    margin-bottom: 1rem;
+}
+
+.upload-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--eco-primary);
+    margin-bottom: 0.5rem;
+}
+
+.upload-subtext {
+    color: var(--eco-secondary);
+    font-size: 0.9rem;
+}
+
+.image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 12px;
+    margin-top: 1rem;
+    box-shadow: 0 8px 25px rgba(45, 80, 22, 0.2);
+}
+
+/* Dynamic Features */
+.features-container {
+    margin-top: 1.5rem;
+}
+
+.feature-item {
+    background: white;
+    border: 2px solid var(--eco-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    border-color: var(--eco-accent);
+    box-shadow: 0 5px 15px rgba(127, 176, 105, 0.2);
+}
+
+.feature-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.feature-number {
+    background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.remove-feature-btn {
+    background: none;
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.remove-feature-btn:hover {
+    background: #dc3545;
+    color: white;
+}
+
+/* Buttons */
+.btn-eco {
+    background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-accent) 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-eco:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+    color: white;
+}
+
+.btn-outline-eco {
+    border: 2px solid var(--eco-accent);
+    color: var(--eco-primary);
+    background: white;
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-outline-eco:hover {
+    background: var(--eco-accent);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--eco-light);
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--eco-light);
+    color: var(--eco-primary);
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 2.5rem;
+    }
+
+    .form-container {
+        padding: 2rem 1.5rem;
+    }
+
+    .form-section {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-eco,
+    .btn-outline-eco {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .add-product-container {
+        margin: 2rem auto;
+        padding: 0 0.5rem;
+    }
+
+    .form-title {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation */
+.fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
 </head>
+
 <body>
-    <h2>Add a New Product</h2>
+    {% include 'plantsapp/partials/navbar.html' %}
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="text-center">
+                <h1><i class="fas fa-plus-circle me-3"></i>Add New Product</h1>
+                <p>Start building your sustainable brand by adding a new eco-friendly product to your store. Share its unique benefits, materials, and purpose to inspire environmentally conscious shoppers.</p>
+            </div>
+        </div>
+    </section>
 
-    <a href="{% url 'home' %}">← Back to Home</a>
-</body>
-</html>
+    <!-- Main Content -->
+    <div class="add-product-container">
+        <div class="form-container fade-in">
+            <h2 class="form-title">Product Information</h2>
+            <p class="form-subtitle">Fill in all the details to create your product listing</p>
+
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-step">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Product Details</span>
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" id="addProductForm">
+                {% csrf_token %}
+
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        Basic Information
+                    </h3>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="productName" class="form-label">
+                                Product Name <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="productName" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="productCategory" class="form-label">
+                                Category <span class="required-asterisk">*</span>
+                            </label>
+                            <select class="form-select" id="productCategory" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="plants">Plants</option>
+                                <option value="seeds">Seeds</option>
+                                <option value="tools">Garden Tools</option>
+                                <option value="fertilizers">Fertilizers</option>
+                                <option value="pots">Pots & Planters</option>
+                                <option value="accessories">Accessories</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="productPrice" class="form-label">
+                                Price ($) <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="productPrice" name="price" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="productOrigin" class="form-label">
+                                Origin <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="productOrigin" name="origin" placeholder="e.g., USA, India, China" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="productDescription" class="form-label">
+                            Description <span class="required-asterisk">*</span>
+                        </label>
+                        <textarea class="form-control" id="productDescription" name="description" rows="4" placeholder="Describe your product in detail..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- Product Image Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        Product Image
+                    </h3>
+
+                    <div class="image-upload-container" onclick="document.getElementById('productImage').click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">Click to upload or drag and drop</div>
+                        <div class="upload-subtext">PNG, JPG, GIF up to 10MB</div>
+                        <input type="file" class="form-control d-none" id="productImage" name="image" accept="image/*" required>
+                        <img id="imagePreview" class="image-preview d-none" alt="Preview">
+                    </div>
+                </div>
+
+                <!-- Product Specifications Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        Product Specifications
+                    </h3>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="productMaterial" class="form-label">
+                                Material <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="productMaterial" name="material" placeholder="e.g., Ceramic, Plastic, Wood" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="productDimensions" class="form-label">
+                                Dimensions <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="productDimensions" name="dimensions" placeholder="e.g., 10x8x6 inches" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="productWeight" class="form-label">
+                                Weight <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="productWeight" name="weight" placeholder="e.g., 2.5 lbs" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="certificationName" class="form-label">
+                                Certification Name
+                            </label>
+                            <input type="text" class="form-control" id="certificationName" name="certification_name" placeholder="e.g., Organic Certified, USDA Organic">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="shelfLife" class="form-label">
+                                Shelf Life
+                            </label>
+                            <input type="text" class="form-control" id="shelfLife" name="shelf_life" placeholder="e.g., 2 years, 6 months">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="storageInstructions" class="form-label">
+                            Storage Instructions
+                        </label>
+                        <textarea class="form-control" id="storageInstructions" name="storage" rows="3" placeholder="Describe how to store this product properly..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Key Features Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        Key Features
+                    </h3>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="numberOfFeatures" class="form-label">
+                                Number of Key Features <span class="required-asterisk">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="numberOfFeatures" name="number_of_features" min="1" max="10" value="3" required>
+                        </div>
+                    </div>
+
+                    <div class="features-container" id="featuresContainer">
+                        <!-- Dynamic feature fields will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn-outline-eco" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-eco">
+                        <i class="fas fa-plus-circle"></i>
+                        Add Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% include 'plantsapp/partials/footer.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Initialize features on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            generateFeatureFields();
+
+            // Initialize animations
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Generate dynamic feature fields
+        function generateFeatureFields() {
+            const numberOfFeatures = parseInt(document.getElementById('numberOfFeatures').value) || 3;
+            const container = document.getElementById('featuresContainer');
+
+            container.innerHTML = '';
+
+            for (let i = 1; i <= numberOfFeatures; i++) {
+                const featureDiv = document.createElement('div');
+                featureDiv.className = 'feature-item';
+                featureDiv.innerHTML = `
+                    <div class="feature-header">
+                        <div class="feature-number">${i}</div>
+                        ${numberOfFeatures > 1 ? `<button type="button" class="remove-feature-btn" onclick="removeFeature(this)"><i class="fas fa-times"></i></button>` : ''}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Feature ${i} <span class="required-asterisk">*</span></label>
+                        <input type="text" class="form-control" name="feature_${i}" placeholder="Enter key feature..." required>
+                    </div>
+                `;
+                container.appendChild(featureDiv);
+            }
+        }
+
+        // Listen for changes in number of features
+        document.getElementById('numberOfFeatures').addEventListener('change', generateFeatureFields);
+
+        // Remove feature function
+        function removeFeature(button) {
+            const featureItem = button.closest('.feature-item');
+            featureItem.remove();
+
+            // Update feature numbers
+            const features = document.querySelectorAll('.feature-item');
+            features.forEach((feature, index) => {
+                const number = feature.querySelector('.feature-number');
+                const label = feature.querySelector('.form-label');
+                const input = feature.querySelector('input');
+
+                number.textContent = index + 1;
+                label.innerHTML = `Feature ${index + 1} <span class="required-asterisk">*</span>`;
+                input.name = `feature_${index + 1}`;
+            });
+
+            // Update the number of features input
+            document.getElementById('numberOfFeatures').value = features.length;
+        }
+
+        // Image upload handling
+        const imageInput = document.getElementById('productImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadContainer = document.querySelector('.image-upload-container');
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop functionality
+        uploadContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.add('dragover');
+        });
+
+        uploadContainer.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.remove('dragover');
+        });
+
+        uploadContainer.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageInput.files = files;
+                const event = new Event('change', { bubbles: true });
+                imageInput.dispatchEvent(event);
+            }
+        });
+
+        // Form submission handling
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Product...';
+            submitBtn.disabled = true;
+
+            // Simulate form submission (replace with actual AJAX call)
+            setTimeout(() => {
+                showNotification('Product added successfully!', 'success');
+                submit
