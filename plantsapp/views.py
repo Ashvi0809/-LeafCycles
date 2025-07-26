@@ -22,6 +22,7 @@ from .models import ContactMessage
 from .models import Category
 from .models import Product
 from django.contrib.auth.decorators import login_required
+from decimal import Decimal
 
 otp_storage = {}
 
@@ -276,6 +277,68 @@ def product_list_by_category(request, category_id):
         'selected_category': category,
         'categories': categories,
     })
+
+
+@require_POST
+@login_required
+def remove_from_wishlist(request, product_id):
+    WishlistItem.objects.filter(user=request.user, product_id=product_id).delete()
+    return JsonResponse({'status': 'removed'})
+
+from django.views.decorators.http import require_POST
+
+@require_POST
+@login_required
+def update_cart_quantity(request, product_id):
+    action = request.POST.get("action")
+    cart_item = CartItem.objects.filter(user=request.user, product_id=product_id).first()
+
+    if not cart_item:
+        return JsonResponse({'error': 'Item not found'}, status=404)
+
+    if action == 'increase':
+        cart_item.quantity += 1
+        cart_item.save()
+    elif action == 'decrease':
+        cart_item.quantity -= 1
+        if cart_item.quantity <= 0:
+            cart_item.delete()
+        else:
+            cart_item.save()
+
+    return JsonResponse({'status': 'success', 'quantity': cart_item.quantity if cart_item.pk else 0})
+
+
+@require_POST
+@login_required
+def delete_cart_item(request, product_id):
+    CartItem.objects.filter(user=request.user, product_id=product_id).delete()
+    return JsonResponse({'status': 'deleted'})
+
+
+
+@login_required
+def clear_cart(request):
+    if request.method == 'POST':
+        CartItem.objects.filter(user=request.user).delete()
+        return redirect('cart')
+    return redirect('cart')
+
+def cart_view(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    subtotal = sum(item.product.price * item.quantity for item in cart_items)
+    tax = round(subtotal * Decimal("0.08"), 2)
+    discount = round(subtotal * Decimal("0.1"), 2)
+    total = round(subtotal + tax - discount, 2)
+
+    return render(request, 'plantsapp/cart.html', {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'tax': tax,
+        'discount': discount,
+        'total': total,
+    })
+
 
 @login_required
 def profile_view(request):

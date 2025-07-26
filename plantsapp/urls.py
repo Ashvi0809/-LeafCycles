@@ -22,7 +22,12 @@ from .views import (
     rate_product,
     product_list_by_category,
     profile_view,
-    add_product
+    add_product,
+    product_list_by_category,
+    remove_from_wishlist,
+    update_cart_quantity,
+    delete_cart_item,
+    clear_cart,
 )
 from . import views
 
@@ -48,6 +53,13 @@ path('products/category/<int:category_id>/',product_list_by_category, name='prod
     path('cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('cart/', cart_view, name='cart'),
     path('rate/<int:product_id>/', rate_product, name='rate_product'),
+    path('wishlist/remove/<int:product_id>/',remove_from_wishlist, name='remove_from_wishlist'),
+    path('cart/update/<int:product_id>/', update_cart_quantity, name='update_cart_quantity'),
+    path('cart/delete/<int:product_id>/', delete_cart_item, name='delete_cart_item'),
+    path('cart/clear/', clear_cart, name='clear_cart'),
+
+    path('api/add-to-cart/<int:product_id>/',add_to_cart, name='add_to_cart'),
+
 
     #  Landing Page
     path('', landing_page, name='landing'),
