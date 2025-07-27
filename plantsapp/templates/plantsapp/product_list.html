@@ -37,6 +37,25 @@
       padding: 20px;
       border-radius: 8px;
     }
+    #productGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+#productGrid.view-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+#productGrid.view-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+#productGrid.view-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+
+
 
   </style>
 </head>
@@ -141,7 +160,7 @@
           <div class="controls d-flex gap-3">
             <div class="d-flex align-items-center gap-2">
               <span>Display:</span>
-              <select class="form-select form-select-sm" style="width: auto;">
+              <select  id="displaySelect" class="form-select form-select-sm" style="width: auto;">
                 <option>12 per page</option>
                 <option>24 per page</option>
                 <option>36 per page</option>
@@ -149,7 +168,7 @@
             </div>
             <div class="d-flex align-items-center gap-2">
               <span>Sort by:</span>
-              <select class="form-select form-select-sm" style="width: auto;">
+              <select  id="sortSelect" class="form-select form-select-sm" style="width: auto;">
                 <option>Best selling</option>
                 <option>Price: Low to High</option>
                 <option>Price: High to Low</option>
@@ -162,8 +181,11 @@
 
         <div class="product-grid" id="productGrid">
           {% for product in products %}
-          <a href="{% url 'product_detail' pk=product.id %}" class="product-card-link">
-            <div class="product-card" data-category="{{ product.category }}">
+          <a href="{% url 'product_detail' pk=product.id %}" class="product-card-link" data-index="{{ forloop.counter0 }}">
+            <div class="product-card"
+     data-category="{{ product.category }}"
+     data-price="{{ product.price }}"
+     data-rating="{{ product.avg_rating|default:0 }}">
               <div class="product-image">
                {% if product.image %}
             <img src="{{ product.image.url }}" alt="{{ product.name }}">
@@ -287,6 +309,89 @@
       form.submit();  // Submit form with selected rating
     });
   });
+
+document.getElementById('sortSelect').addEventListener('change', function () {
+  const selected = this.value;
+  const grid = document.getElementById('productGrid');
+  const cards = Array.from(grid.children);
+
+  if (selected === 'Price: Low to High') {
+    cards.sort((a, b) => {
+      const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('$', ''));
+      const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('$', ''));
+      return priceA - priceB;
+    });
+  } else if (selected === 'Price: High to Low') {
+    cards.sort((a, b) => {
+      const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('$', ''));
+      const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('$', ''));
+      return priceB - priceA;
+    });
+  } else if (selected === 'Customer Rating') {
+    cards.sort((a, b) => {
+      const ratingA = parseFloat(a.getAttribute('data-rating')) || 0;
+      const ratingB = parseFloat(b.getAttribute('data-rating')) || 0;
+      return ratingB - ratingA;
+    });
+  } else if (selected === 'Newest First') {
+    cards.reverse(); // mock: latest are at the end
+  } else if (selected === 'Best selling') {
+    cards.sort((a, b) => {
+      const salesA = parseInt(a.getAttribute('data-sales')) || 0;
+      const salesB = parseInt(b.getAttribute('data-sales')) || 0;
+      return salesB - salesA;
+    });
+  }
+
+  // Re-render sorted cards
+  grid.innerHTML = '';
+  cards.forEach(card => grid.appendChild(card));
+});
+  // DISPLAY X PER PAGE
+document.getElementById('displaySelect').addEventListener('change', function () {
+  const limit = parseInt(this.value);
+  const cards = document.querySelectorAll('.product-card-link');
+
+  cards.forEach((card, index) => {
+    if (index < limit) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+});
+
+// Trigger display filter on initial page load
+window.addEventListener('DOMContentLoaded', () => {
+  const initialLimit = parseInt(document.getElementById('displaySelect').value);
+  const cards = document.querySelectorAll('.product-card-link');
+
+  cards.forEach((card, index) => {
+    if (index < initialLimit) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+});
+  // === VIEW MODE TOGGLE ===
+document.querySelectorAll('.view-btn').forEach(button => {
+  button.addEventListener('click', function () {
+    // Remove 'active' class from all buttons
+    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    this.classList.add('active');
+
+    const view = this.getAttribute('data-view'); // 2, 3, or 4
+    const grid = document.getElementById('productGrid');
+
+    // Remove any existing view-* classes
+    grid.classList.remove('view-2', 'view-3', 'view-4');
+
+    // Add the selected view class
+    grid.classList.add(`view-${view}`);
+  });
+});
+
 </script>
 </body>
 </html>

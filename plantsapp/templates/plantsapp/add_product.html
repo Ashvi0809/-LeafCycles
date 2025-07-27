@@ -484,15 +484,13 @@ select.form-select::placeholder {
                             <label for="productCategory" class="form-label">
                                 Category <span class="required-asterisk">*</span>
                             </label>
-                            <select class="form-select" id="productCategory" name="category" required>
-                                <option value="">Select Category</option>
-                                <option value="plants">Plants</option>
-                                <option value="seeds">Seeds</option>
-                                <option value="tools">Garden Tools</option>
-                                <option value="fertilizers">Fertilizers</option>
-                                <option value="pots">Pots & Planters</option>
-                                <option value="accessories">Accessories</option>
+                           <select class="form-select" id="productCategory" name="category" required>
+                              <option value="">Select Category</option>
+                              {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                              {% endfor %}
                             </select>
+
                         </div>
                     </div>
 
@@ -748,4 +746,7 @@ select.form-select::placeholder {
             // Simulate form submission (replace with actual AJAX call)
             setTimeout(() => {
                 showNotification('Product added successfully!', 'success');
-                submit
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+        }, 1500);
