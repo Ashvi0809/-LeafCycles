@@ -31,7 +31,7 @@ from .views import (
 manage_orders_view,
 )
 from . import views
-
+from .views import order_view
 
 urlpatterns = [
     # HTML Form Views
@@ -67,7 +67,8 @@ path('products/category/<int:category_id>/',product_list_by_category, name='prod
 
     path('profile/', profile_view, name='profile'),
     path('add-product/', add_product, name='add_product'),
-path('manage-orders/', manage_orders_view, name='manage_orders'),
+        path('manage-orders/', manage_orders_view, name='manage_orders'),
+        path('order/', order_view, name='order'),
 
 
 ]
