@@ -1,0 +1,733 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Orders - LeafCycles</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
+  
+  <style>
+    :root {
+      --primary-color: #2d5a27;
+      --secondary-color: #4a7c59;
+      --accent-color: #7fb069;
+      --light-green: #a7c957;
+      --gradient-primary: linear-gradient(135deg, #2d5a27 0%, #4a7c59 50%, #7fb069 100%);
+      --gradient-secondary: linear-gradient(135deg, #7fb069 0%, #a7c957 100%);
+      --dark-color: #1a1a1a;
+      --light-color: #f8f9fa;
+      --white: #ffffff;
+      --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.08);
+      --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.12);
+      --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      line-height: 1.6;
+      color: var(--dark-color);
+      background: var(--light-color);
+      padding-top: 80px;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: var(--gradient-primary);
+      padding: 60px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaf" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M10 2C6 2 2 6 2 10s4 8 8 8 8-4 8-8-4-8-8-8z" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaf)"/></svg>') repeat;
+      opacity: 0.1;
+    }
+
+    .page-header .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-title {
+      font-family: "Playfair Display", serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .page-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb-nav {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 50px;
+      padding: 12px 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .breadcrumb-nav a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb-nav a:hover {
+      color: white;
+    }
+
+    .breadcrumb-nav span {
+      color: var(--light-green);
+      font-weight: 500;
+    }
+
+    /* Orders Section */
+    .orders-section {
+      padding: 80px 0;
+    }
+
+    /* Filter and Search */
+    .orders-controls {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-light);
+      margin-bottom: 40px;
+    }
+
+    .search-filter-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 15px 50px 15px 20px;
+      border: 2px solid var(--light-color);
+      border-radius: 15px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: var(--light-color);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(127, 176, 105, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .filter-select {
+      padding: 15px 20px;
+      border: 2px solid var(--light-color);
+      border-radius: 15px;
+      background: var(--light-color);
+      color: var(--dark-color);
+      font-size: 1rem;
+      min-width: 150px;
+      transition: all 0.3s ease;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(127, 176, 105, 0.2);
+    }
+
+    /* Orders Stats */
+    .orders-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--gradient-secondary);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin: 0 auto 15px;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
+
+    /* Orders Table */
+    .orders-table-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow-light);
+      overflow: hidden;
+    }
+
+    .table-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 25px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: between;
+    }
+
+    .table-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .orders-table {
+      width: 100%;
+      margin: 0;
+    }
+
+    .orders-table thead th {
+      background: var(--light-color);
+      color: var(--primary-color);
+      font-weight: 600;
+      padding: 20px 15px;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
+
+    .orders-table tbody td {
+      padding: 20px 15px;
+      border-bottom: 1px solid var(--light-color);
+      vertical-align: middle;
+    }
+
+    .orders-table tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    .orders-table tbody tr:hover {
+      background: rgba(127, 176, 105, 0.05);
+    }
+
+    /* Order Status Badges */
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pending {
+      background: rgba(255, 193, 7, 0.2);
+      color: #856404;
+    }
+
+    .status-confirmed {
+      background: rgba(0, 123, 255, 0.2);
+      color: #004085;
+    }
+
+    .status-shipped {
+      background: rgba(127, 176, 105, 0.2);
+      color: var(--primary-color);
+    }
+
+    .status-delivered {
+      background: rgba(40, 167, 69, 0.2);
+      color: #155724;
+    }
+
+    .status-cancelled {
+      background: rgba(220, 53, 69, 0.2);
+      color: #721c24;
+    }
+
+    /* Customer Info */
+    .customer-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .customer-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .customer-details h6 {
+      margin: 0;
+      font-weight: 600;
+      color: var(--dark-color);
+      font-size: 0.95rem;
+    }
+
+    .customer-details small {
+      color: #666;
+      font-size: 0.8rem;
+    }
+
+    /* Product Info */
+    .product-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-image {
+      width: 50px;
+      height: 50px;
+      background: var(--light-color);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-color);
+      font-size: 1.2rem;
+    }
+
+    .product-details h6 {
+      margin: 0;
+      font-weight: 600;
+      color: var(--dark-color);
+      font-size: 0.95rem;
+    }
+
+    .product-details small {
+      color: #666;
+      font-size: 0.8rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action {
+      width: 35px;
+      height: 35px;
+      border: none;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-view {
+      background: rgba(0, 123, 255, 0.1);
+      color: #0056b3;
+    }
+
+    .btn-view:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-edit {
+      background: rgba(255, 193, 7, 0.1);
+      color: #856404;
+    }
+
+    .btn-edit:hover {
+      background: #ffc107;
+      color: white;
+    }
+
+    .btn-delete {
+      background: rgba(220, 53, 69, 0.1);
+      color: #721c24;
+    }
+
+    .btn-delete:hover {
+      background: #dc3545;
+      color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #666;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+    }
+
+    .empty-state h4 {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2.5rem;
+      }
+
+      .search-filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .orders-table-container {
+        overflow-x: auto;
+      }
+
+      .orders-table {
+        min-width: 800px;
+      }
+
+      .orders-controls {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .orders-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Include Navbar -->
+  {% include 'plantsapp/partials/navbar.html' %}
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <div class="text-center">
+        <div class="breadcrumb-nav">
+          <a href="{% url 'profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
+          <i class="fas fa-chevron-right mx-2"></i>
+          <span>Manage Orders</span>
+        </div>
+        <h1 class="page-title">Manage Orders</h1>
+        <p class="page-subtitle">
+          Track and manage all orders for your products in one place
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Orders Section -->
+  <section class="orders-section">
+    <div class="container">
+      <!-- Orders Stats -->
+      <div class="orders-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div class="stat-number">{{ total_orders|default:"0" }}</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-number">{{ pending_orders|default:"0" }}</div>
+          <div class="stat-label">Pending Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div class="stat-number">{{ shipped_orders|default:"0" }}</div>
+          <div class="stat-label">Shipped Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <div class="stat-number">${{ total_revenue|default:"0" }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+
+      <!-- Search and Filter Controls -->
+      <div class="orders-controls">
+        <div class="search-filter-row">
+          <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search orders by ID, customer name, or product...">
+            <i class="fas fa-search search-icon"></i>
+          </div>
+          <select class="filter-select">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <select class="filter-select">
+            <option value="">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="orders-table-container">
+        <div class="table-header">
+          <h3 class="table-title">
+            <i class="fas fa-list-alt me-2"></i>
+            Recent Orders
+          </h3>
+        </div>
+        
+        {% if orders %}
+        <table class="orders-table table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td>
+                <strong>#{{ order.id|default:"ORD001" }}</strong>
+              </td>
+              <td>
+                <div class="customer-info">
+                  <div class="customer-avatar">
+                    {{ order.customer_name|default:"JD"|first }}
+                  </div>
+                  <div class="customer-details">
+                    <h6>{{ order.customer_name|default:"John Doe" }}</h6>
+                    <small>{{ order.customer_email|default:"john@example.com" }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="product-info">
+                  <div class="product-image">
+                    <i class="fas fa-leaf"></i>
+                  </div>
+                  <div class="product-details">
+                    <h6>{{ order.product_name|default:"Eco-Friendly Product" }}</h6>
+                    <small>SKU: {{ order.product_sku|default:"ECO001" }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <strong>{{ order.quantity|default:"1" }}</strong>
+              </td>
+              <td>
+                <strong>${{ order.amount|default:"29.99" }}</strong>
+              </td>
+              <td>
+                <span class="status-badge status-{{ order.status|default:'pending' }}">
+                  {{ order.status|default:"Pending"|capfirst }}
+                </span>
+              </td>
+              <td>
+                <small>{{ order.created_at|default:"2024-01-15"|date:"M d, Y" }}</small>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-action btn-view" title="View Details">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-action btn-edit" title="Update Status">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-action btn-delete" title="Cancel Order">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <i class="fas fa-shopping-cart"></i>
+          <h4>No Orders Yet</h4>
+          <p>You haven't received any orders for your products yet. Start promoting your eco-friendly products to get your first orders!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Include Footer -->
+  {% include 'plantsapp/partials/footer.html' %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Search functionality
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('.orders-table tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Filter functionality
+    document.querySelectorAll('.filter-select').forEach(select => {
+      select.addEventListener('change', function() {
+        // Add your filter logic here
+        console.log('Filter changed:', this.value);
+      });
+    });
+
+    // Action button handlers
+    document.querySelectorAll('.btn-view').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Add view order details logic
+        console.log('View order details');
+      });
+    });
+
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Add edit order status logic
+        console.log('Edit order status');
+      });
+    });
+
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to cancel this order?')) {
+          // Add cancel order logic
+          console.log('Cancel order');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

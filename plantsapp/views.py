@@ -344,5 +344,6 @@ def cart_view(request):
 def profile_view(request):
     return render(request, 'plantsapp/profile.html', {'user': request.user})
 
-
-
+@login_required
+def manage_orders_view(request):
+    return render(request, 'plantsapp/manage_orders.html')

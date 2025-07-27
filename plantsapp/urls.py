@@ -28,6 +28,7 @@ from .views import (
     update_cart_quantity,
     delete_cart_item,
     clear_cart,
+manage_orders_view,
 )
 from . import views
 
@@ -66,6 +67,8 @@ path('products/category/<int:category_id>/',product_list_by_category, name='prod
 
     path('profile/', profile_view, name='profile'),
     path('add-product/', add_product, name='add_product'),
+path('manage-orders/', manage_orders_view, name='manage_orders'),
+
 
 ]
 from django.conf import settings
