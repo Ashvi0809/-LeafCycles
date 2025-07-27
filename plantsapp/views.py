@@ -395,3 +395,6 @@ def manage_orders_view(request):
 
 def order_view(request):
     return render(request, 'plantsapp/order.html')
+
+def about_page(request):
+    return render(request, 'plantsapp/aboutpage.html')

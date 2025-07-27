@@ -19,6 +19,7 @@ from .views import (
     add_to_cart,
     cart_view,
     landing_page,
+    about_page,
     rate_product,
     product_list_by_category,
     profile_view,
@@ -41,6 +42,8 @@ urlpatterns = [
     path('forgot-password-form/', forgot_password_form, name='forgot-password-form'),
     path('verify-otp-form/', verify_otp_form, name='verify-otp-form'),
     path('reset-password-form/', reset_password_form, name='reset-password-form'),
+path('about/', about_page, name='about'),
+
 
     # Product Views
     path('products/', product_list, name='product_list'),
@@ -78,3 +81,4 @@ from django.conf.urls.static import static
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
