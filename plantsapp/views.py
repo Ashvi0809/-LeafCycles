@@ -25,6 +25,7 @@ from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_protect
 
+
 otp_storage = {}
 
 # -------------------------
@@ -391,3 +392,6 @@ def profile_view(request):
 def manage_orders_view(request):
     return render(request, 'plantsapp/manage_orders.html')
 
+
+def order_view(request):
+    return render(request, 'plantsapp/order.html')
