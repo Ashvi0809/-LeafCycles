@@ -42,12 +42,24 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
 class Product(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+
+    # New fields based on the add-product form
+    origin = models.CharField(max_length=100, blank=True, null=True)
+    material = models.CharField(max_length=255, blank=True, null=True)
+    dimensions = models.CharField(max_length=100, blank=True, null=True)
+    weight = models.CharField(max_length=50, blank=True, null=True)
+    certification_name = models.CharField(max_length=255, blank=True, null=True)
+    shelf_life = models.CharField(max_length=100, blank=True, null=True)
+    storage = models.TextField(blank=True, null=True)
+    features = models.JSONField(default=list, blank=True)  # Dynamic key features
 
     uploaded_at = models.DateTimeField(default=timezone.now)
     uploaded_by = models.ForeignKey(

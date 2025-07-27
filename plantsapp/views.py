@@ -23,6 +23,7 @@ from .models import Category
 from .models import Product
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
+from django.views.decorators.csrf import csrf_protect
 
 otp_storage = {}
 
@@ -154,15 +155,57 @@ def product_detail(request, pk):
     })
 
 
+
+@login_required
+@csrf_protect
 def add_product(request):
     if request.method == 'POST':
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('product_list')  # name in your urls.py
-    else:
-        form = ProductForm()
-    return render(request, 'plantsapp/add_product.html', {'form': form})
+        name = request.POST.get('name')
+        category_id = request.POST.get('category')
+        category = Category.objects.get(id=category_id)
+        image = request.FILES.get('image')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+
+        # Additional form fields
+        origin = request.POST.get('origin')
+        material = request.POST.get('material')
+        dimensions = request.POST.get('dimensions')
+        weight = request.POST.get('weight')
+        certification_name = request.POST.get('certification_name')
+        shelf_life = request.POST.get('shelf_life')
+        storage = request.POST.get('storage')
+
+        # Gather dynamic features
+        features = []
+        for key in request.POST:
+            if key.startswith('feature_'):
+                feature_value = request.POST.get(key)
+                if feature_value:
+                    features.append(feature_value)
+
+        # Save product to DB
+        product = Product.objects.create(
+            name=name,
+            category=category,
+            image=image,
+            description=description,
+            price=price,
+            origin=origin,
+            material=material,
+            dimensions=dimensions,
+            weight=weight,
+            certification_name=certification_name,
+            shelf_life=shelf_life,
+            storage=storage,
+            features=features,
+            uploaded_by=request.user
+        )
+
+        return redirect('product_list')
+
+    categories = Category.objects.all()
+    return render(request, 'plantsapp/add_product.html', {'categories': categories})
 
 
 @csrf_exempt
