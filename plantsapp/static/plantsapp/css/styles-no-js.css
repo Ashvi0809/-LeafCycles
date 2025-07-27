@@ -269,8 +269,6 @@ body {
   padding: 10px;
 }
 
-
-
 .bike-container {
   position: relative;
   animation: float 6s ease-in-out infinite;
@@ -375,7 +373,8 @@ section {
 
 .section-badge {
   display: inline-block;
-  background: var(--gradient-primary);
+  background: var(--
+  gradient-primary);
   color: white;
   padding: 8px 20px;
   border-radius: 20px;

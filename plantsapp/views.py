@@ -390,3 +390,4 @@ def profile_view(request):
 @login_required
 def manage_orders_view(request):
     return render(request, 'plantsapp/manage_orders.html')
+

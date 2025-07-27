@@ -1,0 +1,834 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Leaf Cycles</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'plantsapp/css/styles-no-js.css' %}">
+    <link rel="stylesheet" href="{% static 'plantsapp/css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'plantsapp/css/footer.css' %}">
+
+    <style>
+        :root {
+            --eco-primary: #2d5016;
+            --eco-secondary: #4a7c59;
+            --eco-accent: #7fb069;
+            --eco-light: #d6eadf;
+            --eco-bg: #f8fffe;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--eco-bg) 0%, var(--eco-light) 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            padding-top: 76px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-secondary) 100%);
+            color: white;
+            padding: 3rem 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 15px,
+                rgba(255,255,255,0.03) 15px,
+                rgba(255,255,255,0.03) 30px
+            );
+            animation: shimmer 6s linear infinite;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(127, 176, 105, 0.2);
+        }
+
+        .breadcrumb {
+            margin: 0;
+            background: none;
+            padding: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--eco-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--eco-primary);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--eco-primary);
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .orders-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(45, 80, 22, 0.1);
+            border: 1px solid rgba(127, 176, 105, 0.1);
+        }
+
+        .filter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--eco-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--eco-light);
+            border-radius: 10px;
+            font-weight: 500;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--eco-accent);
+            box-shadow: 0 0 0 0.2rem rgba(127, 176, 105, 0.25);
+            outline: none;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 124, 89, 0.4);
+        }
+
+        /* Orders Section */
+        .orders-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(45, 80, 22, 0.1);
+            border: 1px solid rgba(127, 176, 105, 0.1);
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--eco-light);
+        }
+
+        .orders-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+            margin: 0;
+        }
+
+        .orders-count {
+            color: var(--eco-secondary);
+            font-weight: 500;
+        }
+
+        /* Order Card */
+        .order-card {
+            border: 2px solid var(--eco-light);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .order-card:hover {
+            border-color: var(--eco-accent);
+            box-shadow: 0 10px 30px rgba(45, 80, 22, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, var(--eco-light) 0%, #ffffff 100%);
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(127, 176, 105, 0.2);
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .order-detail {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--eco-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .order-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--eco-primary);
+        }
+
+        .order-id {
+            font-family: 'Courier New', monospace;
+            background: var(--eco-accent);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .order-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-shipped {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #99d6ff;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .order-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+        }
+
+        /* Order Items */
+        .order-items {
+            padding: 1.5rem;
+        }
+
+        .items-header {
+            font-weight: 600;
+            color: var(--eco-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(127, 176, 105, 0.1);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid var(--eco-light);
+            margin-right: 1rem;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--eco-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .item-info {
+            font-size: 0.9rem;
+            color: var(--eco-secondary);
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--eco-primary);
+            margin-left: 1rem;
+        }
+
+        /* Order Actions */
+        .order-actions {
+            padding: 1.5rem;
+            background: rgba(127, 176, 105, 0.05);
+            border-top: 1px solid rgba(127, 176, 105, 0.1);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--eco-secondary), var(--eco-accent));
+            color: white;
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 124, 89, 0.4);
+        }
+
+        .btn-secondary-action {
+            background: white;
+            color: var(--eco-primary);
+            border: 2px solid var(--eco-accent);
+        }
+
+        .btn-secondary-action:hover {
+            background: var(--eco-accent);
+            color: white;
+        }
+
+        .btn-outline-action {
+            background: transparent;
+            color: var(--eco-secondary);
+            border: 2px solid var(--eco-light);
+        }
+
+        .btn-outline-action:hover {
+            background: var(--eco-light);
+            color: var(--eco-primary);
+        }
+
+        /* Empty State */
+        .empty-orders {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: var(--eco-light);
+            margin-bottom: 2rem;
+        }
+
+        .empty-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--eco-primary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            font-size: 1.1rem;
+            color: var(--eco-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-start-shopping {
+            background: linear-gradient(135deg, var(--eco-primary), var(--eco-secondary));
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .btn-start-shopping:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(45, 80, 22, 0.3);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .item-image {
+                margin-right: 0;
+            }
+
+            .item-price {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .orders-container {
+                margin: 2rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .filter-section,
+            .orders-section {
+                padding: 1.5rem;
+            }
+
+            .empty-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'plantsapp/partials/navbar.html' %}
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="text-center">
+                <h1><i class="fas fa-history me-3"></i>Order History</h1>
+                <p>Track your eco-friendly purchases and order status</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Home</a></li>
+                    <li class="breadcrumb-item"><a href="/account/">My Account</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Order History</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="orders-container">
+        <!-- Filter Section -->
+        <div class="filter-section fade-in">
+            <h3 class="filter-title">
+                <i class="fas fa-filter"></i>
+                Filter Orders
+            </h3>
+            <form method="GET" class="filter-controls">
+                <div class="filter-group">
+                    <label for="status">Order Status</label>
+                    <select id="status" name="status">
+                        <option value="">All Orders</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="date_from">From Date</label>
+                    <input type="date" id="date_from" name="date_from">
+                </div>
+                <div class="filter-group">
+                    <label for="date_to">To Date</label>
+                    <input type="date" id="date_to" name="date_to">
+                </div>
+                <div class="filter-group">
+                    <button type="submit" class="filter-btn">
+                        <i class="fas fa-search me-2"></i>
+                        Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Orders Section -->
+        <div class="orders-section fade-in">
+            <div class="orders-header">
+                <div>
+                    <h2 class="orders-title">Your Orders</h2>
+                    <p class="orders-count">{{ orders|length }} order{{ orders|length|pluralize:"s" }} found</p>
+                </div>
+            </div>
+
+            {% if orders %}
+                {% for order in orders %}
+                <div class="order-card">
+                    <!-- Order Header -->
+                    <div class="order-header">
+                        <div class="order-info">
+                            <div class="order-detail">
+                                <span class="order-label">Order ID</span>
+                                <span class="order-id">#{{ order.id }}</span>
+                            </div>
+                            <div class="order-detail">
+                                <span class="order-label">Order Date</span>
+                                <span class="order-value">{{ order.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="order-detail">
+                                <span class="order-label">Status</span>
+                                <span class="order-status status-{{ order.status|lower }}">{{ order.get_status_display }}</span>
+                            </div>
+                            <div class="order-detail">
+                                <span class="order-label">Total Amount</span>
+                                <span class="order-total">₹{{ order.total_amount }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="order-items">
+                        <div class="items-header">
+                            <i class="fas fa-box me-2"></i>
+                            Items Ordered ({{ order.items.count }})
+                        </div>
+                        {% for item in order.items.all %}
+                        <div class="order-item">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-image">
+                            {% else %}
+                                <img src="{% static 'plantsapp/images/placeholder.svg' %}" alt="No image" class="item-image">
+                            {% endif %}
+                            <div class="item-details">
+                                <div class="item-name">{{ item.product.name }}</div>
+                                <div class="item-info">Quantity: {{ item.quantity }} | Category: {{ item.product.category }}</div>
+                            </div>
+                            <div class="item-price">₹{{ item.price }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Order Actions -->
+                    <div class="order-actions">
+                        <button class="action-btn btn-primary-action" onclick="viewOrderDetails('{{ order.id }}')">
+                            <i class="fas fa-eye"></i>
+                            View Details
+                        </button>
+                        {% if order.status == 'delivered' %}
+                        <button class="action-btn btn-secondary-action" onclick="reorderItems('{{ order.id }}')">
+                            <i class="fas fa-redo"></i>
+                            Reorder
+                        </button>
+                        <button class="action-btn btn-outline-action" onclick="writeReview('{{ order.id }}')">
+                            <i class="fas fa-star"></i>
+                            Write Review
+                        </button>
+                        {% endif %}
+                        {% if order.status == 'processing' %}
+                        <button class="action-btn btn-outline-action" onclick="cancelOrder('{{ order.id }}')">
+                            <i class="fas fa-times"></i>
+                            Cancel Order
+                        </button>
+                        {% endif %}
+                        <button class="action-btn btn-outline-action" onclick="downloadInvoice('{{ order.id }}')">
+                            <i class="fas fa-download"></i>
+                            Download Invoice
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-orders fade-in">
+                    <div class="empty-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h2 class="empty-title">No Orders Found</h2>
+                    <p class="empty-text">
+                        You haven't placed any orders yet. Start shopping for eco-friendly products
+                        and make a positive impact on the environment!
+                    </p>
+                    <a href="{% url 'product_list' %}" class="btn-start-shopping">
+                        <i class="fas fa-leaf"></i>
+                        Start Shopping
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% include 'plantsapp/partials/footer.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // View order details
+        function viewOrderDetails(orderId) {
+            window.location.href = `/orders/${orderId}/`;
+        }
+
+        // Reorder items
+        function reorderItems(orderId) {
+            if (confirm('Add all items from this order to your cart?')) {
+                fetch(`/orders/${orderId}/reorder/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showNotification('Items added to cart successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/cart/';
+                        }, 1500);
+                    } else {
+                        showNotification('Failed to add items to cart', 'error');
+                    }
+                });
+            }
+        }
+
+        // Cancel order
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                fetch(`/orders/${orderId}/cancel/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showNotification('Order cancelled successfully', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification('Failed to cancel order', 'error');
+                    }
+                });
+            }
+        }
+
+        // Write review
+        function writeReview(orderId) {
+            window.location.href = `/orders/${orderId}/review/`;
+        }
+
+        // Download invoice
+        function downloadInvoice(orderId) {
+            window.open(`/orders/${orderId}/invoice/`, '_blank');
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                min-width: 300px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
