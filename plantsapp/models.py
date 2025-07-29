@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models import Avg
 
@@ -29,6 +28,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -43,15 +43,12 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
 class Product(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
-
-    # New fields based on the add-product form
     origin = models.CharField(max_length=100, blank=True, null=True)
     material = models.CharField(max_length=255, blank=True, null=True)
     dimensions = models.CharField(max_length=100, blank=True, null=True)
@@ -59,8 +56,7 @@ class Product(models.Model):
     certification_name = models.CharField(max_length=255, blank=True, null=True)
     shelf_life = models.CharField(max_length=100, blank=True, null=True)
     storage = models.TextField(blank=True, null=True)
-    features = models.JSONField(default=list, blank=True)  # Dynamic key features
-
+    features = models.JSONField(default=list, blank=True)
     uploaded_at = models.DateTimeField(default=timezone.now)
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -77,7 +73,33 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+class Order(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled'),
+    )
 
+    buyer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='orders'
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='orders'
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Order #{self.id} - {self.product.name} by {self.buyer.email}"
 
 class WishlistItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -88,7 +110,6 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.product.name}"
-
 
 class CartItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -106,21 +127,17 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('product', 'user')  # one review per user per product
+        unique_together = ('product', 'user')
 
     def __str__(self):
         return f"{self.user.email} - {self.product.name} ({self.rating}★)"
-
-
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     subject = models.CharField(max_length=200)
     message = models.TextField()
-
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
-

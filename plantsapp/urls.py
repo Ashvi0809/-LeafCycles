@@ -22,16 +22,18 @@ from .views import (
     rate_product,
     product_list_by_category,
     profile_view,
-    add_product,
-    product_list_by_category,
     remove_from_wishlist,
     update_cart_quantity,
     delete_cart_item,
     clear_cart,
-manage_orders_view,
+    manage_orders_view,
+    order_view,
+    create_order,
+    reorder_items,
+    cancel_order,
 )
-from . import views
-from .views import order_view
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # HTML Form Views
@@ -45,8 +47,8 @@ urlpatterns = [
     # Product Views
     path('products/', product_list, name='product_list'),
     path('products/<int:pk>/', product_detail, name='product_detail'),
-    path('add-product/', add_product, name='add-product'),
-path('products/category/<int:category_id>/',product_list_by_category, name='products_by_category'),
+    path('add-product/', add_product, name='add_product'),
+    path('products/category/<int:category_id>/', product_list_by_category, name='products_by_category'),
 
     # Wishlist & Cart
     path('wishlist/<int:product_id>/', toggle_wishlist, name='toggle_wishlist'),
@@ -54,27 +56,29 @@ path('products/category/<int:category_id>/',product_list_by_category, name='prod
     path('cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('cart/', cart_view, name='cart'),
     path('rate/<int:product_id>/', rate_product, name='rate_product'),
-    path('wishlist/remove/<int:product_id>/',remove_from_wishlist, name='remove_from_wishlist'),
+    path('wishlist/remove/<int:product_id>/', remove_from_wishlist, name='remove_from_wishlist'),
     path('cart/update/<int:product_id>/', update_cart_quantity, name='update_cart_quantity'),
     path('cart/delete/<int:product_id>/', delete_cart_item, name='delete_cart_item'),
     path('cart/clear/', clear_cart, name='clear_cart'),
 
-    path('api/add-to-cart/<int:product_id>/',add_to_cart, name='add_to_cart'),
+    # API Views
+    path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/login/', LoginView.as_view(), name='login'),
+    path('api/forgot-password/', ForgotPasswordView.as_view(), name='forgot_password'),
+    path('api/verify-otp/', VerifyOTPView.as_view(), name='verify_otp'),
+    path('api/reset-password/', ResetPasswordView.as_view(), name='reset_password'),
 
-
-    #  Landing Page
+    # Landing Page
     path('', landing_page, name='landing'),
 
+    # Profile and Orders
     path('profile/', profile_view, name='profile'),
-    path('add-product/', add_product, name='add_product'),
-        path('manage-orders/', manage_orders_view, name='manage_orders'),
-        path('order/', order_view, name='order'),
-
-
+    path('manage-orders/', manage_orders_view.as_view(), name='manage_orders'),
+    path('order/', order_view, name='order'),
+    path('create-order/', create_order, name='create_order'),
+    path('orders/<int:order_id>/reorder/', reorder_items, name='reorder_items'),
+    path('orders/<int:order_id>/cancel/', cancel_order, name='cancel_order'),
 ]
-from django.conf import settings
-from django.conf.urls.static import static
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
