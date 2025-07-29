@@ -27,7 +27,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.shortcuts import render
 import jwt
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.middleware import get_user
 import logging
 
@@ -135,6 +135,13 @@ def verify_otp_form(request):
 
 def reset_password_form(request):
     return render(request, 'plantsapp/reset_password.html', {})
+
+
+def logout_view(request):
+    logout(request)
+    response = redirect('/')
+    response.delete_cookie('access_token')
+    return response
 
 
 # -------------------------
@@ -479,7 +486,8 @@ def profile_view(request):
 @method_decorator(login_required, name='dispatch')
 class manage_orders_view(View):
     def get(self, request):
-        orders = Order.objects.filter(product__uploaded_by=request.user).select_related('product', 'buyer')
+        user = request.user
+        orders = Order.objects.filter(product__uploaded_by=user).select_related('product', 'buyer')
         total_orders = orders.count()
         pending_orders = orders.filter(status='pending').count()
         shipped_orders = orders.filter(status='shipped').count()

@@ -31,6 +31,7 @@ from .views import (
     create_order,
     reorder_items,
     cancel_order,
+    logout_view,
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -43,6 +44,7 @@ urlpatterns = [
     path('forgot-password-form/', forgot_password_form, name='forgot-password-form'),
     path('verify-otp-form/', verify_otp_form, name='verify-otp-form'),
     path('reset-password-form/', reset_password_form, name='reset-password-form'),
+    path('logout/', logout_view, name='logout'),
 
     # Product Views
     path('products/', product_list, name='product_list'),
