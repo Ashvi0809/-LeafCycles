@@ -10,7 +10,7 @@ from .views import (
     LoginView,
     ForgotPasswordView,
     VerifyOTPView,
-    ResetPasswordView,
+   # ResetPasswordView,
     product_list,
     product_detail,
     add_product,
@@ -36,6 +36,7 @@ from .views import (
 )
 from django.conf import settings
 from django.conf.urls.static import static
+
 
 urlpatterns = [
     # HTML Form Views
@@ -70,7 +71,8 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/forgot-password/', ForgotPasswordView.as_view(), name='forgot_password'),
     path('api/verify-otp/', VerifyOTPView.as_view(), name='verify_otp'),
-    path('api/reset-password/', ResetPasswordView.as_view(), name='reset_password'),
+    path('api/reset-password/', reset_password_form, name='reset_password'),
+
 
     # Landing Page
     path('', landing_page, name='landing'),

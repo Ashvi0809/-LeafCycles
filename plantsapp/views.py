@@ -30,7 +30,7 @@ import jwt
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.middleware import get_user
 import logging
-from django.db.models import Q  # Added for search query
+from django.db.models import Q
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
@@ -55,7 +55,6 @@ def get_user_from_jwt_request(request):
             logger.error(f"JWT Decode Error: {str(e)}")
         except CustomUser.DoesNotExist:
             logger.error("User not exist")
-    # Fallback to session authentication
     user = get_user(request)
     if user and user.is_authenticated:
         logger.debug(f"Fallback to session user: {user.email}")
@@ -96,7 +95,7 @@ def login_form(request):
         password = request.POST.get("password")
         user = authenticate(request, email=email, password=password)
         if user:
-            login(request, user)  # Enable session authentication
+            login(request, user)
             refresh = RefreshToken.for_user(user)
             response = redirect("/home/")
             token = str(refresh.access_token)
@@ -104,7 +103,7 @@ def login_form(request):
                 'access_token',
                 token,
                 httponly=True,
-                secure=False,  # Set to False for HTTP (dev), True for HTTPS
+                secure=False,
                 samesite='Lax'
             )
             logger.debug(f"Set access_token cookie: {token}")
@@ -153,19 +152,28 @@ def verify_otp_form(request):
 def reset_password_form(request):
     uid = request.GET.get("uid")
     token = request.GET.get("token")
-    user = get_user_from_jwt_request(request)
-    wishlist_count = get_wishlist_count(user) if user else 0
-    cart_count = get_cart_count(user) if user else 0
-    return render(
-        request,
-        'plantsapp/reset_password.html',
-        {
-            'uid': uid,
-            'token': token,
-            'wishlist_count': wishlist_count,
-            'cart_count': cart_count
-        }
-    )
+
+    if request.method == "POST":
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            try:
+                uid_decoded = urlsafe_base64_decode(uid).decode()
+                user = CustomUser.objects.get(pk=uid_decoded)
+            except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+                messages.error(request, "Invalid reset link")
+                return redirect('forgot_password_form')
+
+            if default_token_generator.check_token(user, token):
+                user.set_password(form.cleaned_data["password"])
+                user.save()
+                messages.success(request, "✅ Password reset successful! Please log in.")
+                return redirect('login-form')
+            else:
+                messages.error(request, "Invalid or expired reset link")
+    else:
+        form = ResetPasswordForm()
+
+    return render(request, "plantsapp/reset_password.html", {"form": form, "uid": uid, "token": token})
 
 def logout_view(request):
     logout(request)
@@ -197,7 +205,7 @@ class LoginView(APIView):
                 'access_token',
                 str(refresh.access_token),
                 httponly=True,
-                secure=False,  # Set to False for HTTP (dev), True for HTTPS
+                secure=False,
                 samesite='Lax'
             )
             return response
@@ -240,34 +248,20 @@ class VerifyOTPView(APIView):
         return Response({"error": "Invalid OTP"}, status=400)
 
 
-class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]
+from .forms import ResetPasswordForm
 
-    def post(self, request):
-        # First try POST data, fallback to GET params
-        uid = request.data.get("uid") or request.GET.get("uid")
-        token = request.data.get("token") or request.GET.get("token")
-        password = request.data.get("password")
-        confirm_password = request.data.get("confirm_password")
+def reset_password_form(request):
+    uid = request.GET.get("uid")
+    token = request.GET.get("token")
+    if request.method == "POST":
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            # handle password reset logic
+            ...
+    else:
+        form = ResetPasswordForm()
+    return render(request, "plantsapp/reset_password.html", {"form": form, "uid": uid, "token": token})
 
-        if not uid or not token:
-            return Response({"error": "Invalid or missing reset credentials"}, status=400)
-
-        if password != confirm_password:
-            return Response({"error": "Passwords do not match"}, status=400)
-
-        try:
-            uid = urlsafe_base64_decode(uid).decode()
-            user = CustomUser.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
-            return Response({"error": "Invalid reset link"}, status=400)
-
-        if default_token_generator.check_token(user, token):
-            user.set_password(password)
-            user.save()
-            return Response({"msg": "Password reset successful"}, status=200)
-        else:
-            return Response({"error": "Invalid or expired token"}, status=400)
 
 
 def product_list(request):
@@ -286,7 +280,7 @@ def product_list(request):
         'selected_category': None,
         'wishlist_count': wishlist_count,
         'cart_count': cart_count,
-        'search_query': None  # Added for search context
+        'search_query': None
     }
     return render(request, 'plantsapp/product_list.html', context)
 
@@ -536,7 +530,7 @@ def product_list_by_category(request, category_id):
         'categories': categories,
         'wishlist_count': wishlist_count,
         'cart_count': cart_count,
-        'search_query': None  # Added for search context
+        'search_query': None
     }
     return render(request, 'plantsapp/product_list.html', context)
 
@@ -749,3 +743,45 @@ def forgot_password_form(request):
                 messages.error(request, "Could not send reset link. Try again.")
 
         return render(request, "plantsapp/forgot_password.html")
+
+@csrf_protect
+def add_review(request, product_id):
+    user = get_user_from_jwt_request(request)
+    if not user:
+        return redirect('/login-form/')  # redirect if not logged in
+
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            rating = form.cleaned_data['rating']
+            comment = form.cleaned_data['comment']
+
+            review, created = Review.add_review(
+                product=product,
+                user=user,
+                rating=rating,
+                comment=comment
+            )
+
+            if created:
+                messages.success(request, "✅ Your review has been submitted!")
+            else:
+                messages.info(request, "✏️ Your review has been updated!")
+
+            return redirect('product_detail', pk=product.id)
+        else:
+            messages.error(request, "❌ There was a problem with your review. Please try again.")
+    else:
+        form = ReviewForm()
+
+    wishlist_count = get_wishlist_count(user)
+    cart_count = get_cart_count(user)
+
+    return render(request, "plantsapp/add_review.html", {
+        "form": form,
+        "product": product,
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
+    })

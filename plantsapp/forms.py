@@ -24,3 +24,13 @@ class ContactForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'placeholder': 'Subject', 'class': 'form-control'}),
             'message': forms.Textarea(attrs={'placeholder': 'Your Message', 'class': 'form-control', 'rows': 4}),
         }
+
+class ResetPasswordForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("password") != cleaned_data.get("confirm_password"):
+            raise forms.ValidationError("Passwords do not match")
+        return cleaned_data
