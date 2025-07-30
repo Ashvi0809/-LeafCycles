@@ -31,6 +31,13 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.middleware import get_user
 import logging
 from django.db.models import Q  # Added for search query
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework.permissions import AllowAny
+import requests
+from django.urls import reverse
+from django.contrib import messages
 
 logger = logging.getLogger(__name__)
 
@@ -144,12 +151,21 @@ def verify_otp_form(request):
 
 
 def reset_password_form(request):
+    uid = request.GET.get("uid")
+    token = request.GET.get("token")
     user = get_user_from_jwt_request(request)
     wishlist_count = get_wishlist_count(user) if user else 0
     cart_count = get_cart_count(user) if user else 0
-    return render(request, 'plantsapp/reset_password.html',
-                  {'wishlist_count': wishlist_count, 'cart_count': cart_count})
-
+    return render(
+        request,
+        'plantsapp/reset_password.html',
+        {
+            'uid': uid,
+            'token': token,
+            'wishlist_count': wishlist_count,
+            'cart_count': cart_count
+        }
+    )
 
 def logout_view(request):
     logout(request)
@@ -189,19 +205,30 @@ class LoginView(APIView):
 
 
 class ForgotPasswordView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         email = request.data.get("email")
-        if CustomUser.objects.filter(email=email).exists():
-            code = str(random.randint(100000, 999999))
-            otp_storage[email] = code
-            send_mail(
-                "Password Reset Code",
-                f"Your OTP code is: {code}",
-                settings.EMAIL_HOST_USER,
-                [email]
-            )
-            return Response({"msg": "OTP sent to email"})
-        return Response({"error": "User not found"}, status=404)
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        # Create reset token and link
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        reset_url = request.build_absolute_uri(f"/reset-password-form/?uid={uid}&token={token}")
+
+        # Send email with reset link
+        send_mail(
+            "Password Reset Request",
+            f"Click the link to reset your password:\n{reset_url}",
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+
+        return Response({"msg": "Password reset link sent to your email"})
+
 
 
 class VerifyOTPView(APIView):
@@ -214,18 +241,33 @@ class VerifyOTPView(APIView):
 
 
 class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
-        email = request.data.get("email")
+        # First try POST data, fallback to GET params
+        uid = request.data.get("uid") or request.GET.get("uid")
+        token = request.data.get("token") or request.GET.get("token")
         password = request.data.get("password")
         confirm_password = request.data.get("confirm_password")
+
+        if not uid or not token:
+            return Response({"error": "Invalid or missing reset credentials"}, status=400)
+
         if password != confirm_password:
             return Response({"error": "Passwords do not match"}, status=400)
-        user = CustomUser.objects.filter(email=email).first()
-        if user:
+
+        try:
+            uid = urlsafe_base64_decode(uid).decode()
+            user = CustomUser.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            return Response({"error": "Invalid reset link"}, status=400)
+
+        if default_token_generator.check_token(user, token):
             user.set_password(password)
             user.save()
-            return Response({"msg": "Password reset successful"})
-        return Response({"error": "User not found"}, status=404)
+            return Response({"msg": "Password reset successful"}, status=200)
+        else:
+            return Response({"error": "Invalid or expired token"}, status=400)
 
 
 def product_list(request):
@@ -691,3 +733,19 @@ def cancel_order(request, order_id):
     except Exception as e:
         logger.error(f"Error cancelling order: {str(e)}")
         return JsonResponse({'error': 'Failed to cancel order'}, status=500)
+
+def forgot_password_form(request):
+        if request.method == "POST":
+            email = request.POST.get("email")
+            response = requests.post(
+                request.build_absolute_uri(reverse("forgot_password")),
+                data={"email": email}
+            )
+
+            if response.status_code == 200:
+                messages.success(request, "Password reset link sent! Please check your email.")
+                return render(request, "plantsapp/forgot_password_success.html")
+            else:
+                messages.error(request, "Could not send reset link. Try again.")
+
+        return render(request, "plantsapp/forgot_password.html")
