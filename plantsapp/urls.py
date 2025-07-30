@@ -32,6 +32,7 @@ from .views import (
     reorder_items,
     cancel_order,
     logout_view,
+    product_search,  # Added new view
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -51,6 +52,7 @@ urlpatterns = [
     path('products/<int:pk>/', product_detail, name='product_detail'),
     path('add-product/', add_product, name='add_product'),
     path('products/category/<int:category_id>/', product_list_by_category, name='products_by_category'),
+    path('search/', product_search, name='product_search'),  # Added search URL
 
     # Wishlist & Cart
     path('wishlist/<int:product_id>/', toggle_wishlist, name='toggle_wishlist'),

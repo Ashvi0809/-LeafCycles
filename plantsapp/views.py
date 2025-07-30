@@ -15,7 +15,7 @@ from .forms import ProductForm
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 from .models import CartItem
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.views.decorators.http import require_POST
 from .models import ContactMessage
 from .models import Category
@@ -30,6 +30,7 @@ import jwt
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.middleware import get_user
 import logging
+from django.db.models import Q  # Added for search query
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,7 @@ def signup_form(request):
         serializer = RegisterSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return redirect("/api/login/")
+            return redirect("/api/login-form/")
         else:
             return render(request, "plantsapp/signup.html", {"errors": serializer.errors})
     return render(request, "plantsapp/signup.html", {})
@@ -108,7 +109,9 @@ def login_form(request):
 
 def home_view(request):
     user = get_user_from_jwt_request(request)
-    context = {'user': user}
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    context = {'user': user, 'wishlist_count': wishlist_count, 'cart_count': cart_count}
     if request.method == "POST":
         if user:
             name = request.POST.get("name")
@@ -126,15 +129,26 @@ def home_view(request):
 
 
 def forgot_password_form(request):
-    return render(request, 'plantsapp/forgot_password.html', {})
+    user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    return render(request, 'plantsapp/forgot_password.html',
+                  {'wishlist_count': wishlist_count, 'cart_count': cart_count})
 
 
 def verify_otp_form(request):
-    return render(request, 'plantsapp/verify_otp.html', {})
+    user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    return render(request, 'plantsapp/verify_otp.html', {'wishlist_count': wishlist_count, 'cart_count': cart_count})
 
 
 def reset_password_form(request):
-    return render(request, 'plantsapp/reset_password.html', {})
+    user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    return render(request, 'plantsapp/reset_password.html',
+                  {'wishlist_count': wishlist_count, 'cart_count': cart_count})
 
 
 def logout_view(request):
@@ -216,6 +230,8 @@ class ResetPasswordView(APIView):
 
 def product_list(request):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     products = Product.objects.annotate(review_count=Count('reviews'))
     categories = Category.objects.all()
     wishlist_ids = []
@@ -225,20 +241,56 @@ def product_list(request):
         'products': products,
         'wishlist_ids': list(wishlist_ids),
         'categories': categories,
-        'selected_category': None
+        'selected_category': None,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count,
+        'search_query': None  # Added for search context
+    }
+    return render(request, 'plantsapp/product_list.html', context)
+
+
+def product_search(request):
+    user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    query = request.GET.get('q', '').strip()
+    categories = Category.objects.all()
+    wishlist_ids = []
+    if user:
+        wishlist_ids = WishlistItem.objects.filter(user=user).values_list('product_id', flat=True)
+
+    if query:
+        products = Product.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        ).annotate(review_count=Count('reviews'))
+    else:
+        products = Product.objects.annotate(review_count=Count('reviews'))
+
+    context = {
+        'products': products,
+        'wishlist_ids': list(wishlist_ids),
+        'categories': categories,
+        'selected_category': None,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count,
+        'search_query': query
     }
     return render(request, 'plantsapp/product_list.html', context)
 
 
 def product_detail(request, pk):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     product = get_object_or_404(Product, pk=pk)
     in_wishlist = False
     if user:
         in_wishlist = WishlistItem.objects.filter(user=user, product=product).exists()
     context = {
         'product': product,
-        'in_wishlist': in_wishlist
+        'in_wishlist': in_wishlist,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count
     }
     return render(request, 'plantsapp/product_detail.html', context)
 
@@ -246,7 +298,9 @@ def product_detail(request, pk):
 @csrf_protect
 def add_product(request):
     user = get_user_from_jwt_request(request)
-    context = {'categories': Category.objects.all()}
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    context = {'categories': Category.objects.all(), 'wishlist_count': wishlist_count, 'cart_count': cart_count}
     if request.method == 'POST' and user:
         name = request.POST.get('name')
         category_id = request.POST.get('category')
@@ -300,17 +354,20 @@ def toggle_wishlist(request, product_id):
         wishlist_item, created = WishlistItem.objects.get_or_create(user=user, product=product)
         if not created:
             wishlist_item.delete()
-            return JsonResponse({'status': 'removed'})
+            return JsonResponse({'status': 'removed', 'wishlist_count': get_wishlist_count(user)})
         else:
-            return JsonResponse({'status': 'added'})
+            return JsonResponse({'status': 'added', 'wishlist_count': get_wishlist_count(user)})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 def wishlist_view(request):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     if not user:
         return redirect('/login-form/')
-    context = {'wishlist_items': WishlistItem.objects.filter(user=user)}
+    context = {'wishlist_items': WishlistItem.objects.filter(user=user), 'wishlist_count': wishlist_count,
+               'cart_count': cart_count}
     return render(request, 'plantsapp/wishlist.html', context)
 
 
@@ -333,7 +390,7 @@ def add_to_cart(request, product_id):
             cart_item.quantity += 1
             cart_item.save()
         if request.is_ajax():
-            cart_count = CartItem.objects.filter(user=user).count()
+            cart_count = get_cart_count(user)
             return JsonResponse({
                 'status': 'added',
                 'cart_count': cart_count,
@@ -347,6 +404,8 @@ def add_to_cart(request, product_id):
 
 def cart_view(request):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     if not user:
         return redirect('/login-form/')
     cart_items = CartItem.objects.filter(user=user)
@@ -360,13 +419,17 @@ def cart_view(request):
         'tax': tax,
         'discount': discount,
         'total': total,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count
     }
     return render(request, 'plantsapp/cart.html', context)
 
 
 def landing_page(request):
     user = get_user_from_jwt_request(request)
-    context = {'user': user}
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
+    context = {'user': user, 'wishlist_count': wishlist_count, 'cart_count': cart_count}
     return render(request, 'plantsapp/landing.html', context)
 
 
@@ -376,6 +439,8 @@ def rate_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     rating = int(request.POST.get("rating"))
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     if not user:
         return redirect('/login-form/')
     review, created = Review.objects.get_or_create(user=user, product=product)
@@ -388,10 +453,7 @@ def wishlist_count(request):
     user = get_user_from_jwt_request(request)
     if not user:
         return redirect('/login-form/')
-    if user:
-        count = WishlistItem.objects.filter(user=user).count()
-    else:
-        count = 0
+    count = get_wishlist_count(user)
     return {'wishlist_count': count}
 
 
@@ -399,15 +461,26 @@ def cart_count(request):
     user = get_user_from_jwt_request(request)
     if not user:
         return redirect('/login-form/')
-    if user:
-        count = CartItem.objects.filter(user=user).count()
-    else:
-        count = 0
+    count = get_cart_count(user)
     return {'cart_count': count}
+
+
+def get_wishlist_count(user):
+    if user:
+        return WishlistItem.objects.filter(user=user).count()
+    return 0
+
+
+def get_cart_count(user):
+    if user:
+        return CartItem.objects.filter(user=user).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    return 0
 
 
 def product_list_by_category(request, category_id):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     category = get_object_or_404(Category, id=category_id)
     products = Product.objects.filter(category=category)
     categories = Category.objects.all()
@@ -419,6 +492,9 @@ def product_list_by_category(request, category_id):
         'wishlist_ids': list(wishlist_ids),
         'selected_category': category,
         'categories': categories,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count,
+        'search_query': None  # Added for search context
     }
     return render(request, 'plantsapp/product_list.html', context)
 
@@ -430,7 +506,7 @@ def remove_from_wishlist(request, product_id):
     if not user:
         return redirect('/login-form/')
     WishlistItem.objects.filter(user=user, product_id=product_id).delete()
-    return JsonResponse({'status': 'removed'})
+    return JsonResponse({'status': 'removed', 'wishlist_count': get_wishlist_count(user)})
 
 
 @require_POST
@@ -452,7 +528,9 @@ def update_cart_quantity(request, product_id):
             cart_item.delete()
         else:
             cart_item.save()
-    return JsonResponse({'status': 'success', 'quantity': cart_item.quantity if cart_item.pk else 0})
+    cart_count = get_cart_count(user)
+    return JsonResponse(
+        {'status': 'success', 'quantity': cart_item.quantity if cart_item.pk else 0, 'cart_count': cart_count})
 
 
 @require_POST
@@ -462,7 +540,8 @@ def delete_cart_item(request, product_id):
     if not user:
         return redirect('/login-form/')
     CartItem.objects.filter(user=user, product_id=product_id).delete()
-    return JsonResponse({'status': 'deleted'})
+    cart_count = get_cart_count(user)
+    return JsonResponse({'status': 'deleted', 'cart_count': cart_count})
 
 
 @require_POST
@@ -477,9 +556,21 @@ def clear_cart(request):
 
 def profile_view(request):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     if not user:
         return redirect('/login-form/')
-    context = {'user': user}
+    products_listed = Product.objects.filter(uploaded_by=user).count() if user else 0
+    orders_placed = Order.objects.filter(buyer=user).count() if user else 0
+    member_since = user.date_joined.year if user and user.date_joined else 0
+    context = {
+        'user': user,
+        'products_listed': products_listed,
+        'orders_placed': orders_placed,
+        'member_since': member_since,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count
+    }
     return render(request, 'plantsapp/profile.html', context)
 
 
@@ -487,6 +578,8 @@ def profile_view(request):
 class manage_orders_view(View):
     def get(self, request):
         user = request.user
+        wishlist_count = get_wishlist_count(user) if user else 0
+        cart_count = get_cart_count(user) if user else 0
         orders = Order.objects.filter(product__uploaded_by=user).select_related('product', 'buyer')
         total_orders = orders.count()
         pending_orders = orders.filter(status='pending').count()
@@ -511,6 +604,8 @@ class manage_orders_view(View):
             'pending_orders': pending_orders,
             'shipped_orders': shipped_orders,
             'total_revenue': total_revenue,
+            'wishlist_count': wishlist_count,
+            'cart_count': cart_count
         })
 
 
@@ -546,12 +641,16 @@ def create_order(request):
 
 def order_view(request):
     user = get_user_from_jwt_request(request)
+    wishlist_count = get_wishlist_count(user) if user else 0
+    cart_count = get_cart_count(user) if user else 0
     if not user:
         return redirect('/login-form/')
     orders = Order.objects.filter(buyer=user).select_related('product').order_by('-created_at')
     context = {
         'user': user,
         'orders': orders,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count
     }
     return render(request, 'plantsapp/order.html', context)
 
@@ -570,7 +669,7 @@ def reorder_items(request, order_id):
         else:
             cart_item.quantity = order.quantity
         cart_item.save()
-        return JsonResponse({'status': 'success', 'message': 'Items added to cart'})
+        return JsonResponse({'status': 'success', 'message': 'Items added to cart', 'cart_count': get_cart_count(user)})
     except Exception as e:
         logger.error(f"Error reordering: {str(e)}")
         return JsonResponse({'error': 'Failed to add items to cart'}, status=500)

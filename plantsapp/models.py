@@ -8,7 +8,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, number, pincode, password=None):
         if not email:
             raise ValueError("Email is required")
-        user = self.model(email=self.normalize_email(email), name=name, number=number, pincode=pincode)
+        user = self.model(email=self.normalize_email(email), name=name, number=number, pincode=pincode, date_joined=timezone.now())
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -27,7 +27,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     pincode = models.CharField(max_length=10)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    date_joined = models.DateTimeField(default=timezone.now)
 
     objects = CustomUserManager()
 
