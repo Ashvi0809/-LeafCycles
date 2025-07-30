@@ -122,9 +122,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Custom User Model
 AUTH_USER_MODEL = 'plantsapp.CustomUser'
 
-# Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST_USER = 'noreply@leafcycles.com'
+# Email Configuration for Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'testing.project090801@gmail.com'
+EMAIL_HOST_PASSWORD = 'uspxoezcxggtstcj'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 # REST Framework Configuration
 REST_FRAMEWORK = {
