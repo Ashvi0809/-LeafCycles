@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -1500,11 +1501,33 @@
         }
 
         // Add to Cart
-        function addToCart() {
-            const quantity = document.getElementById('quantity').value;
-            showNotification(`Added ${quantity} item(s) to cart!`, 'success');
-        }
+// Add to Cart
+function addToCart() {
+    const productId = {{ product.id }}; // Assuming product.id is available in the template context
+    const quantity = document.getElementById('quantity').value;
 
+    fetch(`/cart/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `quantity=${quantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'added') {
+            showNotification(`${quantity} item(s) added to cart!`, 'success');
+            updateCartCount(data.cart_count); // Update cart count in navbar
+        } else {
+            showNotification('Failed to add to cart', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Something went wrong', 'error');
+    });
+}
         // Buy Now
         function buyNow() {
             showNotification('Redirecting to checkout...', 'info');
@@ -1591,3 +1614,4 @@
     </script>
 </body>
 </html>
+
