@@ -31,28 +31,29 @@
     <!-- Right Section: Search and Icons -->
     <div class="d-flex align-items-center gap-3">
 
-
       <!-- Search Box -->
-<form class="d-flex align-items-center" action="#" method="GET" style="border: 2px solid #c9e4c5; border-radius: 30px; overflow: hidden; background-color: #fdfdfd;">
-  <input
-    type="text"
-    name="search"
-    placeholder="Cotton-bags, Bamboo-Toothbrushes, ..."
-    style="border: none; padding: 10px 15px; outline: none; flex-grow: 1; font-weight: 500; color: #333; background-color: #fdfdfd;"
-  />
-  <button
-    type="submit"
-    style="background-color: #a7c957; border: none; padding: 10px 16px; color: white; cursor: pointer;"
-  >
-    <i class="fas fa-search"></i>
-  </button>
-</form>
+ <form class="d-flex align-items-center" action="{% url 'product_search' %}" method="GET" style="border: 2px solid #c9e4c5; border-radius: 30px; overflow: hidden; background-color: #fdfdfd;">
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Cotton-bags, Bamboo-Toothbrushes, ..."
+                    style="border: none; padding: 10px 15px; outline: none; flex-grow: 1; font-weight: 500; color: #333; background-color: #fdfdfd;"
+                />
+                <button
+                    type="submit"
+                    style="background-color: #a7c957; border: none; padding: 10px 16px; color: white; cursor: pointer;"
+                >
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
 
       <!-- Wishlist Icon -->
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Wishlist">
         <a href="{% url 'wishlist' %}" class="text-dark"><i class="fas fa-heart"></i></a>
         {% if wishlist_count > 0 %}
-          <span class="badge rounded-pill bg-danger">{{ wishlist_count }}</span>
+          <span class="badge rounded-pill bg-danger wishlist-count">{{ wishlist_count }}</span>
+        {% else %}
+          <span class="badge rounded-pill bg-danger wishlist-count" style="display: none;">0</span>
         {% endif %}
       </div>
 
@@ -60,17 +61,149 @@
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Shopping Cart">
         <a href="{% url 'cart' %}" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
         {% if cart_count > 0 %}
-          <span class="badge rounded-pill bg-danger">{{ cart_count }}</span>
+          <span class="badge rounded-pill bg-danger cart-count">{{ cart_count }}</span>
+        {% else %}
+          <span class="badge rounded-pill bg-danger cart-count" style="display: none;">0</span>
         {% endif %}
       </div>
 
       <!-- Account Icon -->
       <div class="icon-box position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Account">
-  <a href="{% url 'profile' %}" class="text-dark">
-    <i class="fas fa-user"></i>
-  </a>
-</div>
+        <a href="{% url 'profile' %}" class="text-dark">
+          <i class="fas fa-user"></i>
+        </a>
+      </div>
 
     </div>
   </div>
 </nav>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Handle Wishlist Toggle
+    $('.toggle-wishlist').on('click', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.wishlist_count !== undefined) {
+                    var wishlistBadge = $('.wishlist-count');
+                    wishlistBadge.text(response.wishlist_count);
+                    if (response.wishlist_count > 0) {
+                        wishlistBadge.show();
+                    } else {
+                        wishlistBadge.hide();
+                    }
+                }
+            },
+            error: function() {
+                console.log('Error updating wishlist count');
+            }
+        });
+    });
+
+    // Handle Add to Cart
+    $('.add-to-cart').on('click', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.cart_count !== undefined) {
+                    var cartBadge = $('.cart-count');
+                    cartBadge.text(response.cart_count);
+                    if (response.cart_count > 0) {
+                        cartBadge.show();
+                    } else {
+                        cartBadge.hide();
+                    }
+                }
+            },
+            error: function() {
+                console.log('Error updating cart count');
+            }
+        });
+    });
+
+    // Handle Update Cart Quantity
+    $('.update-cart-quantity').on('click', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.cart_count !== undefined) {
+                    var cartBadge = $('.cart-count');
+                    cartBadge.text(response.cart_count);
+                    if (response.cart_count > 0) {
+                        cartBadge.show();
+                    } else {
+                        cartBadge.hide();
+                    }
+                }
+            },
+            error: function() {
+                console.log('Error updating cart quantity');
+            }
+        });
+    });
+
+    // Handle Delete Cart Item
+    $('.delete-cart-item').on('click', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.cart_count !== undefined) {
+                    var cartBadge = $('.cart-count');
+                    cartBadge.text(response.cart_count);
+                    if (response.cart_count > 0) {
+                        cartBadge.show();
+                    } else {
+                        cartBadge.hide();
+                    }
+                }
+            },
+            error: function() {
+                console.log('Error deleting cart item');
+            }
+        });
+    });
+
+    // Handle Reorder Items
+    $('.reorder-items').on('click', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.cart_count !== undefined) {
+                    var cartBadge = $('.cart-count');
+                    cartBadge.text(response.cart_count);
+                    if (response.cart_count > 0) {
+                        cartBadge.show();
+                    } else {
+                        cartBadge.hide();
+                    }
+                }
+            },
+            error: function() {
+                console.log('Error reordering items');
+            }
+        });
+    });
+});
+</script>

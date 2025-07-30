@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import CustomUser
 from django.contrib.auth import authenticate
+from .models import CustomUser
 
 class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
@@ -24,6 +24,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
     def validate(self, data):
+        # Adjust for JWT; this should use a custom authentication method if needed
         user = authenticate(email=data['email'], password=data['password'])
         if user and user.is_active:
             return user
